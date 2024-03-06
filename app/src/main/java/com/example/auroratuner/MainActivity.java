@@ -3,25 +3,40 @@ package com.example.auroratuner;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
+public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final EditText ticket = findViewById(R.id.ticket);
-        final TextView showcase = findViewById(R.id.showcase);
-        final Button button = findViewById(R.id.button);
-        button.setOnClickListener(v -> {
-            String ticketText = ticket.getText().toString();
-            if (!ticketText.equals("")) {
-                showcase.setText(ticketText);
+        System.out.println("Fuck");
+        final BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationPanel);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.bottom_settings) {
+                System.out.println("Shit");
+                return true;
+            } else if (id == R.id.bottom_tuner) {
+                System.out.println("Dick");
+                return true;
+            } else if (id == R.id.bottom_news) {
+                System.out.println("Amogus");
+                return true;
+            } else {
+                System.out.println("WTF");
+                return false;
             }
         });
+        bottomNav.setSelectedItemId(R.id.bottom_tuner);
     }
 }

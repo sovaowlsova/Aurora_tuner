@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Aurora tuner</string>
-    <string name="hint">Введите ваш текст</string>
-    <string name="showcase">Здесь будет ваш текст</string>
-    <string name="button">Написать</string>
+    <string name="nav_news">Новости</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="nav_tuner">Тюнер</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
