@@ -48,16 +48,16 @@
         -->
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/gray"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationPanel"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/mainView"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </FrameLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
