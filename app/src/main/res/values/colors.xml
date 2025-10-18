@@ -4,7 +4,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#000000FF</color>
     <color name="nav_bar_colorPrimary">#673AB7</color>
-    <color name="colorPrimaryDark">#3E05A5</color>
     <color name="colorAccent">#7B5BB5</color>
     <color name="gray">#414141</color>
 </resources>

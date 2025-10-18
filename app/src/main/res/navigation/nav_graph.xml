@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/tunerFragment">
+
     <fragment
         android:id="@+id/tunerFragment"
         android:name="com.example.auroratuner.TunerFragment"
@@ -19,4 +20,9 @@
         android:name="com.example.auroratuner.NewsFragment"
         android:label="news"
         tools:layout="@layout/fragment_news" />
+    <fragment
+        android:id="@+id/permissionFragment"
+        android:name="com.example.auroratuner.PermissionFragment"
+        android:label="permission"
+        tools:layout="@layout/fragment_permission"/>
 </navigation>
