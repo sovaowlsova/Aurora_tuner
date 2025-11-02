@@ -65,11 +65,10 @@ public class MainActivity extends AppCompatActivity {
                 if (checkVal != PackageManager.PERMISSION_GRANTED &&
                         navController.getCurrentDestination().getId() != R.id.permissionFragment) {
                     navController.navigate(R.id.permissionFragment);
-                    return true;
                 } else {
                     navController.navigate(R.id.tunerFragment);
-                    return true;
                 }
+                return true;
             } else if (id == navController.getCurrentDestination().getId()) {
                     return false;
             } else {
