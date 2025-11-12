@@ -43,7 +43,7 @@ public class PermissionFragment extends Fragment {
         Button allowButton = getView().findViewById(R.id.allow_button);
         allowButton.setOnClickListener(v ->
                 ActivityCompat.requestPermissions(requireActivity(), permissions,
-                PermissionID.REQUEST_RECORD_AUDIO_PERMISSION.get()));
+                        PermissionID.REQUEST_RECORD_AUDIO_PERMISSION.get()));
     }
 
 }
