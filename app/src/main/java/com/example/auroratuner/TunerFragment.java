@@ -13,21 +13,28 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.apache.commons.math3.util.CombinatoricsUtils;
-
 import java.util.Locale;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class TunerFragment extends Fragment {
 
+    TextView noteText;
+
+    ScheduledExecutorService tunerScheduler;
+    AudioRecord record;
+
     private final String[] permissions = {Manifest.permission.RECORD_AUDIO};
 
-    private final int SAMPLE_RATE = 4410;
-    private final int BUFFER_SIZE = 2048;
+    private final int SAMPLE_RATE = 44100;
+    private final int BUFFER_SIZE = 8192;
 
     public TunerFragment() {
         // Required empty public constructor
@@ -48,7 +55,7 @@ public class TunerFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setFactorialText();
+        setContextualVariables();
         startTuner();
     }
 
@@ -64,26 +71,48 @@ public class TunerFragment extends Fragment {
             System.out.println("WARNING: Couldn't find a context");
             return;
         }
-        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), permissions, PermissionID.REQUEST_RECORD_AUDIO_PERMISSION.get());
             return;
         }
-        AudioRecord record = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, BUFFER_SIZE);
-        byte[] buffer = new byte[BUFFER_SIZE];
-        int res = record.read(buffer, 0, BUFFER_SIZE);
-        if (res < 0) {
-            System.out.println("WARNING: couldn't read audio");
-        }
 
+        System.out.println("Starting tuner");
+        record = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE,
+                AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, BUFFER_SIZE);
+        record.startRecording();
+
+        tunerScheduler = Executors.newScheduledThreadPool(1);
+        tunerScheduler.scheduleAtFixedRate(() -> {
+            short[] buffer = new short[BUFFER_SIZE];
+            int res = record.read(buffer, 0, BUFFER_SIZE);
+            if (res < BUFFER_SIZE) {
+                System.out.printf(Locale.US, "WARNING: couldn't read audio. res = %d%n", res);
+            }
+            double frequency = SoundProcessor.findFrequencyByAutocorrelation(buffer, SAMPLE_RATE);
+            if (frequency < 0) {
+                return;
+            }
+            requireActivity().runOnUiThread(() -> {
+                noteText.setText(String.format(Locale.US, "%.2f Hz", frequency));
+            });
+        }, 0, 100, TimeUnit.MILLISECONDS);
     }
 
     private void stopTuner() {
-
+        System.out.println("Stopping tuner");
+        if (tunerScheduler != null) {
+            tunerScheduler.shutdownNow();
+            tunerScheduler = null;
+        }
+        if (record != null) {
+            record.stop();
+            record.release();
+            record = null;
+        }
     }
 
-    private void setFactorialText() {
-        TextView text = getView().findViewById(R.id.factorial_text);
-        long factorial = CombinatoricsUtils.factorial(5);
-        text.setText(String.format(Locale.US, "factorial of 5 is: %d", factorial));
+    private void setContextualVariables() {
+        View view = getView();
+        noteText = view.findViewById(R.id.note_text);
     }
 }
