@@ -88,12 +88,12 @@ public class TunerFragment extends Fragment {
             if (res < BUFFER_SIZE) {
                 System.out.printf(Locale.US, "WARNING: couldn't read audio. res = %d%n", res);
             }
-            double frequency = SoundProcessor.findFrequencyByAutocorrelation(buffer, SAMPLE_RATE);
+            double frequency = SoundProcessor.findDominatingFrequency(buffer, BUFFER_SIZE, SAMPLE_RATE);
             if (frequency < 0) {
                 return;
             }
             requireActivity().runOnUiThread(() -> {
-                noteText.setText(String.format(Locale.US, "%.2f Hz", frequency));
+                noteText.setText(String.format(Locale.US, "Auto: %.2f", frequency));
             });
         }, 0, 100, TimeUnit.MILLISECONDS);
     }
