@@ -49,18 +49,32 @@ public class SoundProcessor {
     }
 
     private static double[] computeDifferenceFunction(double[] normalized) {
+        FastFourierTransformer fft = new FastFourierTransformer(DftNormalization.STANDARD);
+        Complex[] fftResult = fft.transform(normalized, TransformType.FORWARD);
+
+        double[] powerSpectrum = computePowerSpectrum(fftResult);
+
+        Complex[] autocorrelation = fft.transform(powerSpectrum, TransformType.INVERSE);
+
         double[] differenceFunction = new double[normalized.length / 2];
+        double energy = autocorrelation[0].getReal();
 
         for (int t = 0; t < differenceFunction.length; t++) {
-            double sum = 0;
-            for (int i = 0; i < normalized.length - t; i++) {
-                double diff = normalized[i] - normalized[i + t];
-                sum += diff * diff;
-            }
-            differenceFunction[t] = sum;
+            differenceFunction[t] = energy - autocorrelation[t].getReal();
         }
 
         return differenceFunction;
+    }
+
+    private static double[] computePowerSpectrum(Complex[] fftResult) {
+        double[] powerSpectrum = new double[fftResult.length];
+
+        for (int i = 0; i < powerSpectrum.length; i++) {
+            double abs = fftResult[i].abs();
+            powerSpectrum[i] = abs * abs;
+        }
+
+        return powerSpectrum;
     }
 
     private static double[] applyCumulativeNormalization(double[] differenceFunction) {
