@@ -15,6 +15,7 @@ import java.util.Locale;
 public class SoundProcessor {
     private static final double ABSOLUTE_THRESHOLD = 0.1;
 
+    // Here we implement YIN ourselves because TarsosDSP is using GPL-3.0 license
     /**
      * Finds fundamental pitch using the YIN algorithm
      *
@@ -47,26 +48,16 @@ public class SoundProcessor {
         return sampleRate / interpolatedPeriod;
     }
 
-    private static double[] computePowerSpectrum(Complex[] fftResult) {
-        double[] powerSpectrum = new double[fftResult.length / 2];
-
-        for (int i = 0; i < powerSpectrum.length; i++) {
-            powerSpectrum[i] = Math.pow(fftResult[i].abs(), 2);
-        }
-
-        return powerSpectrum;
-    }
-
     private static double[] computeDifferenceFunction(double[] normalized) {
         double[] differenceFunction = new double[normalized.length / 2];
 
-        for (int tau = 0; tau < differenceFunction.length; tau++) {
+        for (int t = 0; t < differenceFunction.length; t++) {
             double sum = 0;
-            for (int i = 0; i < normalized.length - tau; i++) {
-                double diff = normalized[i] - normalized[i + tau];
+            for (int i = 0; i < normalized.length - t; i++) {
+                double diff = normalized[i] - normalized[i + t];
                 sum += diff * diff;
             }
-            differenceFunction[tau] = sum;
+            differenceFunction[t] = sum;
         }
 
         return differenceFunction;
