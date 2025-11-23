@@ -1,5 +1,7 @@
 package com.example.auroratuner;
 
+import android.media.AudioFormat;
+
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -8,117 +10,90 @@ import org.apache.commons.math3.transform.TransformType;
 import java.util.Arrays;
 import java.util.Locale;
 
+
+
 public class SoundProcessor {
     private static final double MIN_CORRELATION = 0.05;
     private static final double FIND_RANGE = 1.5;
+    private static final double ABSOLUTE_THRESHOLD = 0.1;
     // private static final double WEIGHT = 0.7;
-    public static double findDominatingFrequency(short[] audioData, int bufferSize, int sampleRate) {
-        double[] normalized = normalizeSignal(audioData);
-        applyHammingWindowDirectly(normalized);
 
-        Complex[] complexSamples = new Complex[bufferSize];
-        for (int i = 0; i < bufferSize; i++) {
-            complexSamples[i] = new Complex(normalized[i], 0);
-        }
-
-        FastFourierTransformer fastFourierTransformer = new FastFourierTransformer(DftNormalization.STANDARD);
-        Complex[] fftResult = fastFourierTransformer.transform(complexSamples, TransformType.FORWARD);
-
-        double maxMagnitude = 0;
-        int maxIndex = 0;
-
-        for (int i = 1; i < fftResult.length / 2; i++) {
-            double magnitude = fftResult[i].abs();
-
-            if (magnitude > maxMagnitude) {
-                maxMagnitude = magnitude;
-                maxIndex = i;
-            }
-        }
-
-        double frequency = (double) maxIndex * sampleRate / fftResult.length;
-
-        return findFrequencyByAutocorrelation(normalized, sampleRate, frequency);
-    }
-
-    private static double findFrequencyByAutocorrelation(double[] normalizedSamples, int sampleRate, double baseNote) {
-        int minFrequency = (int)(baseNote / FIND_RANGE);
-        int maxFrequency = (int)(baseNote * FIND_RANGE);
-
-        int minLag = sampleRate / maxFrequency;
-        int maxLag = Math.min(sampleRate / minFrequency, normalizedSamples.length / 2);
-
-        double maxCorrelation = -1;
-        int bestLag = -1;
-
-        for (int lag = minLag; lag <= maxLag; lag++) {
-            double correlation = 0;
-
-            for (int i = 0; i < normalizedSamples.length - lag; i++) {
-                correlation += normalizedSamples[i] * normalizedSamples[i + lag];
-            }
-
-            correlation /= (normalizedSamples.length - lag);
-
-            if (correlation > maxCorrelation) {
-                maxCorrelation = correlation;
-                bestLag = lag;
-            }
-        }
-
-        if (maxCorrelation < MIN_CORRELATION) {
-            return -1;
-        }
-
-        double frequency = (double) sampleRate / bestLag;
-
-        if (frequency < minFrequency || frequency > maxFrequency) {
-            return -1;
-        }
-
-        return frequency;
-    }
-
-    /* public static double findFrequencyByAutocorrelation(short[] samples, int sampleRate) {
-        int minFrequency = 80;
-        int maxFrequency = 1500;
-
-        int minLag = sampleRate / maxFrequency;
-        int maxLag = Math.min(sampleRate / minFrequency, samples.length / 2);
-
+    public static double findPitch(short[] samples, int bufferSize, int sampleRate) {
         double[] normalized = normalizeSignal(samples);
         applyHammingWindowDirectly(normalized);
 
-        double maxCorrelation = -1;
-        int bestLag = -1;
+        double[] differenceFunction = computeDifferenceFunction(normalized);
+        double[] cumulativeNormalization = applyCumulativeNormalization(differenceFunction);
 
-        for (int lag = minLag; lag <= maxLag; lag++) {
-            double correlation = 0;
+        int fundamentalPeriod = applyAbsoluteThreshold(cumulativeNormalization);
+        double interpolatedPeriod = applyParabolicInterpolation(cumulativeNormalization, fundamentalPeriod);
 
-            for (int i = 0; i < normalized.length - lag; i++) {
-                correlation += normalized[i] * normalized[i + lag];
+        return sampleRate / interpolatedPeriod;
+    }
+
+    private static double[] computePowerSpectrum(Complex[] fftResult) {
+        double[] powerSpectrum = new double[fftResult.length / 2];
+
+        for (int i = 0; i < powerSpectrum.length; i++) {
+            powerSpectrum[i] = Math.pow(fftResult[i].abs(), 2);
+        }
+
+        return powerSpectrum;
+    }
+
+    private static double[] computeDifferenceFunction(double[] normalized) {
+        double[] differenceFunction = new double[normalized.length / 2];
+
+        for (int tau = 0; tau < differenceFunction.length; tau++) {
+            double sum = 0;
+            for (int i = 0; i < normalized.length - tau; i++) {
+                double diff = normalized[i] - normalized[i + tau];
+                sum += diff * diff;
             }
+            differenceFunction[tau] = sum;
+        }
 
-            correlation /= (normalized.length - lag);
+        return differenceFunction;
+    }
 
-            if (correlation > maxCorrelation) {
-                maxCorrelation = correlation;
-                bestLag = lag;
+    private static double[] applyCumulativeNormalization(double[] differenceFunction) {
+        double[] cumulative = new double[differenceFunction.length];
+        cumulative[0] = 1;
+
+        double sum = 0;
+        for (int t = 1; t < differenceFunction.length; t++) {
+            sum += differenceFunction[t];
+            cumulative[t] = differenceFunction[t] / (sum / t);
+        }
+
+        return cumulative;
+    }
+
+    private static int applyAbsoluteThreshold(double[] cumulative) {
+        for (int t = 2; t < cumulative.length; t++) {
+            if (cumulative[t] < ABSOLUTE_THRESHOLD) {
+                // Finding local minimum
+                while (t + 1 < cumulative.length && cumulative[t + 1] < cumulative[t]) {
+                    t++;
+                }
+                return t;
             }
         }
+        // No trough found
+        return -1;
+    }
 
-        if (maxCorrelation < MIN_CORRELATION) {
-            return -1;
+    private static double applyParabolicInterpolation(double[] cumulative, int t) {
+        if (t <= 0 || t >= cumulative.length - 1) {
+            return t;
         }
 
-        double frequency = (double) sampleRate / bestLag;
+        double y1 = cumulative[t - 1];
+        double y2 = cumulative[t];
+        double y3 = cumulative[t + 1];
 
-        if (frequency < minFrequency || frequency > maxFrequency) {
-            return -1;
-        }
-
-        return frequency;
-    }*/
+        return t + (y1 - y3) / (2 * (y1 - 2 * y2 + y3));
+    }
 
     private static double[] normalizeSignal(short[] samples) {
         double[] normalized = new double[samples.length];
