@@ -13,12 +13,28 @@ import java.util.Locale;
 
 
 public class SoundProcessor {
-    private static final double MIN_CORRELATION = 0.05;
-    private static final double FIND_RANGE = 1.5;
     private static final double ABSOLUTE_THRESHOLD = 0.1;
-    // private static final double WEIGHT = 0.7;
 
-    public static double findPitch(short[] samples, int bufferSize, int sampleRate) {
+    /**
+     * Finds fundamental pitch using the YIN algorithm
+     *
+     * @param samples    input 16-bit audio signal
+     * @param sampleRate sample rate in Hz
+     *
+     * @return fundamental pitch or -1 if the pitch can not be found or is too weak
+     *
+     * @example
+     * <pre>{@code
+     * short[] audioBuffer = // get data
+     * double pitch = SoundProcessor.findPitch(audioBuffer, 2048, 44100);
+     * if (pitch > 0) {
+     *     System.out.printf("Fundamental pitch: %.2f Hz%n", pitch);
+     * } else {
+     *     System.out.println("Couldn't find pitch");
+     * }
+     * }</pre>
+     */
+    public static double findPitch(short[] samples, int sampleRate) {
         double[] normalized = normalizeSignal(samples);
         applyHammingWindowDirectly(normalized);
 

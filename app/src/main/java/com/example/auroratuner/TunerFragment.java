@@ -88,7 +88,7 @@ public class TunerFragment extends Fragment {
             if (res < BUFFER_SIZE) {
                 System.out.printf(Locale.US, "WARNING: couldn't read audio. res = %d%n", res);
             }
-            double frequency = SoundProcessor.findPitch(buffer, BUFFER_SIZE, SAMPLE_RATE);
+            double frequency = SoundProcessor.findPitch(buffer, SAMPLE_RATE);
             if (frequency < 0) {
                 return;
             }
