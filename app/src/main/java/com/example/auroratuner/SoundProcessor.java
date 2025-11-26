@@ -15,6 +15,41 @@ import java.util.Locale;
 public class SoundProcessor {
     private static final double ABSOLUTE_THRESHOLD = 0.1;
 
+    /**
+     * Maps frequency to note
+     *
+     * @param frequency frequency of the note
+     *
+     * @return name of the note (C0, A5, G3#)
+     */
+    public static String frequencyToNote(double frequency) {
+        Octave foundOctave = null;
+        for (Octave octave : Octave.values()) {
+            if (octave.getLowestFrequency() <= frequency && frequency < octave.getHighestFrequency()) {
+                foundOctave = octave;
+                break;
+            }
+        }
+        if (foundOctave == null) {
+            return "";
+        }
+
+        Note foundNote = null;
+        double closestMatch = foundOctave.getHighestFrequency();
+        for (Note note : foundOctave.getNotes()) {
+            double delta = note.getDelta(frequency);
+            if (delta < closestMatch) {
+                foundNote = note;
+                closestMatch = delta;
+            }
+        }
+        if (foundNote == null) {
+            return "";
+        }
+
+        return foundNote.getName();
+    }
+
     // Here we implement YIN ourselves because TarsosDSP is using GPL-3.0 license
     /**
      * Finds fundamental pitch using the YIN algorithm

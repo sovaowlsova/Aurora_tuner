@@ -92,8 +92,12 @@ public class TunerFragment extends Fragment {
             if (frequency < 0) {
                 return;
             }
+            String noteName = SoundProcessor.frequencyToNote(frequency);
+            if (noteName.isEmpty()) {
+                return;
+            }
             requireActivity().runOnUiThread(() -> {
-                noteText.setText(String.format(Locale.US, "%.2f HZ", frequency));
+                noteText.setText(noteName);
             });
         }, 0, 100, TimeUnit.MILLISECONDS);
     }
