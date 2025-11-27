@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class TunerFragment extends Fragment {
 
     TextView noteText;
+    TextView deltaText;
 
     ScheduledExecutorService tunerScheduler;
     AudioRecord record;
@@ -90,14 +91,16 @@ public class TunerFragment extends Fragment {
             }
             double frequency = SoundProcessor.findPitch(buffer, SAMPLE_RATE);
             if (frequency < 0) {
+                System.out.println("Error");
                 return;
             }
-            String noteName = SoundProcessor.frequencyToNote(frequency);
-            if (noteName.isEmpty()) {
+            Note baseNote = SoundProcessor.frequencyToNote(frequency);
+            if (baseNote == null) {
                 return;
             }
             requireActivity().runOnUiThread(() -> {
-                noteText.setText(noteName);
+                noteText.setText(baseNote.getName());
+                deltaText.setText(String.format(Locale.US, "%.2f", baseNote.getDelta(frequency)));
             });
         }, 0, 100, TimeUnit.MILLISECONDS);
     }
@@ -118,5 +121,6 @@ public class TunerFragment extends Fragment {
     private void setContextualVariables() {
         View view = getView();
         noteText = view.findViewById(R.id.note_text);
+        deltaText = view.findViewById(R.id.delta_text);
     }
 }

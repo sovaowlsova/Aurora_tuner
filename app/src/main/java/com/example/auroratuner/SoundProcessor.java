@@ -22,7 +22,7 @@ public class SoundProcessor {
      *
      * @return name of the note (C0, A5, G3#)
      */
-    public static String frequencyToNote(double frequency) {
+    public static Note frequencyToNote(double frequency) {
         Octave foundOctave = null;
         for (Octave octave : Octave.values()) {
             if (octave.getLowestFrequency() <= frequency && frequency < octave.getHighestFrequency()) {
@@ -31,23 +31,20 @@ public class SoundProcessor {
             }
         }
         if (foundOctave == null) {
-            return "";
+            return null;
         }
 
         Note foundNote = null;
         double closestMatch = foundOctave.getHighestFrequency();
         for (Note note : foundOctave.getNotes()) {
-            double delta = note.getDelta(frequency);
+            double delta = Math.abs(note.getDelta(frequency));
             if (delta < closestMatch) {
                 foundNote = note;
                 closestMatch = delta;
             }
         }
-        if (foundNote == null) {
-            return "";
-        }
 
-        return foundNote.getName();
+        return foundNote;
     }
 
     // Here we implement YIN ourselves because TarsosDSP is using GPL-3.0 license

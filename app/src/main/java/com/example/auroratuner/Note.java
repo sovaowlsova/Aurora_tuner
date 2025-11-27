@@ -126,6 +126,6 @@ public enum Note {
     }
 
     public double getDelta(double otherFrequency) {
-        return Math.abs(this.frequency - otherFrequency);
+        return otherFrequency - this.frequency;
     }
 }
