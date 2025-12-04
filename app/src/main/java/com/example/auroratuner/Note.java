@@ -1,5 +1,7 @@
 package com.example.auroratuner;
 
+import java.util.Locale;
+
 public enum Note {
     C0("C0", 16.35),
     C1("C1", 32.7),
@@ -126,6 +128,12 @@ public enum Note {
     }
 
     public double getDelta(double otherFrequency) {
-        return otherFrequency - this.frequency;
+        return otherFrequency - frequency;
+    }
+
+    public String getFormattedDelta(double otherFrequency, int precision) {
+        double delta = getDelta(otherFrequency);
+        return (delta > 0 ? "+" : "") +
+                String.format(Locale.US, "%." + precision + "f", delta);
     }
 }

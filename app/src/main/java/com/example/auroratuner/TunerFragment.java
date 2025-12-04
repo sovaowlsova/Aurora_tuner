@@ -99,8 +99,8 @@ public class TunerFragment extends Fragment {
                 return;
             }
             requireActivity().runOnUiThread(() -> {
-                noteText.setText(baseNote.getName());
-                deltaText.setText(String.format(Locale.US, "%.2f", baseNote.getDelta(frequency)));
+                noteText.setText(String.format(Locale.US, "%s(%.2f)", baseNote.getName(), baseNote.getFrequency()));
+                deltaText.setText(baseNote.getFormattedDelta(frequency, 2));
             });
         }, 0, 100, TimeUnit.MILLISECONDS);
     }

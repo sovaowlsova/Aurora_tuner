@@ -47,7 +47,7 @@ public class SoundProcessor {
         return foundNote;
     }
 
-    // Here we implement YIN ourselves because TarsosDSP is using GPL-3.0 license
+    // Here we implement YIN ourselves because TarsosDSP uses GPL-3.0 license
     /**
      * Finds fundamental pitch using the YIN algorithm
      *
