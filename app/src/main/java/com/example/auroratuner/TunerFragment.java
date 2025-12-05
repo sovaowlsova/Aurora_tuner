@@ -40,10 +40,12 @@ public class TunerFragment extends Fragment {
 
     private final int SAMPLE_RATE = 44100;
     private final int BUFFER_SIZE = 8192;
-    private final float HIT_PRECISION = 0.05f;
+    private final float HIT_PRECISION = 0.5f;
     private final float MAX_LINE_BIAS = 0.895f;
     private final float MIN_LINE_BIAS = 0.105f;
-    private final float MAX_NOTE_DELTA = 0.25f;
+    private final float MAX_NOTE_DELTA = 0.03f;
+
+    private final float BIAS_INTERVAL = MAX_LINE_BIAS - 0.5f;
 
     public TunerFragment() {
         // Required empty public constructor
@@ -98,6 +100,7 @@ public class TunerFragment extends Fragment {
                 System.out.printf(Locale.US, "WARNING: couldn't read audio. res = %d%n", res);
             }
             double frequency = SoundProcessor.findPitch(buffer, SAMPLE_RATE);
+            System.out.println(frequency);
             if (frequency < 0) {
                 return;
             }
@@ -106,15 +109,21 @@ public class TunerFragment extends Fragment {
                 return;
             }
             requireActivity().runOnUiThread(() -> {
-                float lineBias = 0f;
+                float percentsDelta = baseNote.getPercentsDelta(frequency);
+                float invertedPercentsDelta = percentsDelta * -1;
+                float mappedPercentsDelta = invertedPercentsDelta / MAX_NOTE_DELTA;
+                float lineBias = 0.5f + BIAS_INTERVAL * mappedPercentsDelta;
                 float clampedLineBias = Math.max(MIN_LINE_BIAS, Math.min(MAX_LINE_BIAS, lineBias));
+
                 constraintSet.setHorizontalBias(R.id.measure_line, clampedLineBias);
-                constraintLayout.setConstraintSet(constraintSet);
-                System.out.println(clampedLineBias);
+                System.out.println(frequency);
+
                 noteText.setText(String.format(Locale.US, "%s(%.2f)", baseNote.getName(), baseNote.getFrequency()));
                 deltaText.setText(baseNote.getSignedDelta(frequency, 2));
-                if (baseNote.getPercentsDelta(frequency) < HIT_PRECISION) {
+                if (Math.abs(baseNote.getDelta(frequency)) < HIT_PRECISION) {
                     noteText.setTextColor(Color.parseColor("#00FF00"));
+                } else {
+                    noteText.setTextColor(Color.parseColor("#FFFFFF"));
                 }
             });
         }, 0, 100, TimeUnit.MILLISECONDS);
@@ -137,8 +146,10 @@ public class TunerFragment extends Fragment {
         View view = getView();
         noteText = view.findViewById(R.id.note_text);
         deltaText = view.findViewById(R.id.delta_text);
+
         constraintLayout = view.findViewById(R.id.tuner_constraint_layout);
         constraintSet = new ConstraintSet();
         constraintSet.clone(constraintLayout);
+        constraintLayout.setConstraintSet(constraintSet);
     }
 }

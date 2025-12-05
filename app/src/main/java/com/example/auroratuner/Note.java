@@ -139,6 +139,6 @@ public enum Note {
     }
 
     public float getPercentsDelta(double otherFrequency) {
-        return (float)Math.abs(1 - (otherFrequency / frequency));
+        return (float)(1.0f - (otherFrequency / frequency));
     }
 }
