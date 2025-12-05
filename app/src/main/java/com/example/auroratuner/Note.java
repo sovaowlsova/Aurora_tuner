@@ -111,6 +111,7 @@ public enum Note {
     B6("B6", 1975.53),
     B7("B7", 3951),
     B8("B8", 7902.13);
+
     private final String name;
     private final double frequency;
 
@@ -131,9 +132,13 @@ public enum Note {
         return otherFrequency - frequency;
     }
 
-    public String getFormattedDelta(double otherFrequency, int precision) {
+    public String getSignedDelta(double otherFrequency, int precision) {
         double delta = getDelta(otherFrequency);
         return (delta > 0 ? "+" : "") +
                 String.format(Locale.US, "%." + precision + "f", delta);
+    }
+
+    public float getPercentsDelta(double otherFrequency) {
+        return (float)Math.abs(1 - (otherFrequency / frequency));
     }
 }

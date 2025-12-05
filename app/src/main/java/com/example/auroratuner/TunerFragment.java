@@ -3,6 +3,7 @@ package com.example.auroratuner;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -10,10 +11,11 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,8 @@ public class TunerFragment extends Fragment {
 
     TextView noteText;
     TextView deltaText;
+    ConstraintLayout constraintLayout;
+    ConstraintSet constraintSet;
 
     ScheduledExecutorService tunerScheduler;
     AudioRecord record;
@@ -36,6 +40,10 @@ public class TunerFragment extends Fragment {
 
     private final int SAMPLE_RATE = 44100;
     private final int BUFFER_SIZE = 8192;
+    private final float HIT_PRECISION = 0.05f;
+    private final float MAX_LINE_BIAS = 0.895f;
+    private final float MIN_LINE_BIAS = 0.105f;
+    private final float MAX_NOTE_DELTA = 0.25f;
 
     public TunerFragment() {
         // Required empty public constructor
@@ -91,7 +99,6 @@ public class TunerFragment extends Fragment {
             }
             double frequency = SoundProcessor.findPitch(buffer, SAMPLE_RATE);
             if (frequency < 0) {
-                System.out.println("Error");
                 return;
             }
             Note baseNote = SoundProcessor.frequencyToNote(frequency);
@@ -99,8 +106,16 @@ public class TunerFragment extends Fragment {
                 return;
             }
             requireActivity().runOnUiThread(() -> {
+                float lineBias = 0f;
+                float clampedLineBias = Math.max(MIN_LINE_BIAS, Math.min(MAX_LINE_BIAS, lineBias));
+                constraintSet.setHorizontalBias(R.id.measure_line, clampedLineBias);
+                constraintLayout.setConstraintSet(constraintSet);
+                System.out.println(clampedLineBias);
                 noteText.setText(String.format(Locale.US, "%s(%.2f)", baseNote.getName(), baseNote.getFrequency()));
-                deltaText.setText(baseNote.getFormattedDelta(frequency, 2));
+                deltaText.setText(baseNote.getSignedDelta(frequency, 2));
+                if (baseNote.getPercentsDelta(frequency) < HIT_PRECISION) {
+                    noteText.setTextColor(Color.parseColor("#00FF00"));
+                }
             });
         }, 0, 100, TimeUnit.MILLISECONDS);
     }
@@ -122,5 +137,8 @@ public class TunerFragment extends Fragment {
         View view = getView();
         noteText = view.findViewById(R.id.note_text);
         deltaText = view.findViewById(R.id.delta_text);
+        constraintLayout = view.findViewById(R.id.tuner_constraint_layout);
+        constraintSet = new ConstraintSet();
+        constraintSet.clone(constraintLayout);
     }
 }

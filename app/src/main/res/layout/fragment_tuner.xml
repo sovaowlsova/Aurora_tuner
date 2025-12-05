@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tuner_constraint_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TunerFragment">
@@ -40,6 +41,7 @@
         android:id="@+id/measure"
         android:layout_width="300dp"
         android:layout_height="120dp"
+        android:contentDescription="@string/measure_description"
         android:src="@drawable/measure"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,9 +52,11 @@
         android:id="@+id/measure_line"
         android:layout_width="4dp"
         android:layout_height="120dp"
+        android:contentDescription="@string/measure_line_description"
         android:src="@drawable/measure_line"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/measure"
+        app:layout_constraintHorizontal_bias="0.015"
         app:layout_constraintStart_toStartOf="@+id/measure"
         app:layout_constraintTop_toTopOf="parent" />
 
