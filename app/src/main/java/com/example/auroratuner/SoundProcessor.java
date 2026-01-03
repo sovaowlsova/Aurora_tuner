@@ -30,21 +30,19 @@ public class SoundProcessor {
                 break;
             }
         }
-        if (foundOctave == null) {
-            return null;
-        }
 
-        Note foundNote = null;
-        double closestMatch = foundOctave.getHighestFrequency();
-        for (Note note : foundOctave.getNotes()) {
-            double delta = Math.abs(note.getDelta(frequency));
-            if (delta < closestMatch) {
-                foundNote = note;
-                closestMatch = delta;
+        // Pretty unrealistic but what if
+        if (foundOctave == null) {
+            if (frequency >= Octave.Eighth.getHighestFrequency()) {
+                foundOctave = Octave.Eighth;
+            } else if (frequency <= Octave.Zero.getLowestFrequency()) {
+                foundOctave = Octave.Zero;
+            } else {
+                return null;
             }
         }
 
-        return foundNote;
+        return foundOctave.getClosestNote(frequency);
     }
 
     // Here we implement YIN ourselves because TarsosDSP uses GPL-3.0 license

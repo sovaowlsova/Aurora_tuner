@@ -50,4 +50,19 @@ public enum Octave {
     public Note[] getNotes() {
         return notes.clone();
     }
+
+    public Note getClosestNote(double frequency) {
+        Note foundNote = null;
+
+        double closestMatch = highestFrequency;
+        for (Note note : notes) {
+            double delta = Math.abs(note.getDelta(frequency));
+            if (delta < closestMatch) {
+                foundNote = note;
+                closestMatch = delta;
+            }
+        }
+
+        return foundNote;
+    }
 }
