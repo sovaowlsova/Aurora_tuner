@@ -11,6 +11,13 @@
     <string name="note_text_placeholder">Play something</string>
     <string name="measure_description">musical note measure</string>
     <string name="measure_line_description">current deviation from note</string>
+    <string name = "instrument_guitar">guitar</string>
+    <string name = "instrument_ukulele">ukulele</string>
+    
+    <string-array name="instruments_array">
+        <item>@string/instrument_guitar</item>
+        <item>@string/instrument_ukulele</item>
+    </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

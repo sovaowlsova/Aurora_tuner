@@ -19,6 +19,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -30,6 +32,7 @@ public class TunerFragment extends Fragment {
 
     TextView noteText;
     TextView deltaText;
+    Spinner instrumentSelectionSpinner;
     ConstraintLayout constraintLayout;
     ConstraintSet constraintSet;
 
@@ -68,6 +71,7 @@ public class TunerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setContextualVariables();
         startTuner();
+        setInstrumentSelectionSpinnerVariables();
     }
 
     @Override
@@ -100,7 +104,7 @@ public class TunerFragment extends Fragment {
                 System.out.printf(Locale.US, "WARNING: couldn't read audio. res = %d%n", res);
             }
             double frequency = SoundProcessor.findPitch(buffer, SAMPLE_RATE);
-            System.out.println(frequency);
+            // System.out.println(frequency);
             if (frequency < 0) {
                 return;
             }
@@ -146,10 +150,28 @@ public class TunerFragment extends Fragment {
         View view = getView();
         noteText = view.findViewById(R.id.note_text);
         deltaText = view.findViewById(R.id.delta_text);
+        instrumentSelectionSpinner = view.findViewById(R.id.instrument_selection_spinner);
 
         constraintLayout = view.findViewById(R.id.tuner_constraint_layout);
         constraintSet = new ConstraintSet();
         constraintSet.clone(constraintLayout);
         constraintLayout.setConstraintSet(constraintSet);
+    }
+
+    private void setInstrumentSelectionSpinnerVariables() {
+        Context context = getContext();
+        if (context == null) {
+            System.out.println("WARNING: Couldn't find a context");
+            return;
+        }
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                context,
+                R.array.instruments_array,
+                android.R.layout.simple_spinner_item
+        );
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        instrumentSelectionSpinner.setAdapter(adapter);
     }
 }
