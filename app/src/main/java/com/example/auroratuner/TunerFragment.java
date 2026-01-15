@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -32,7 +33,8 @@ public class TunerFragment extends Fragment {
 
     TextView noteText;
     TextView deltaText;
-    Spinner instrumentSelectionSpinner;
+    AutoCompleteTextView instrumentSelectionSpinner;
+    AutoCompleteTextView tuningSelectionSpinner;
     ConstraintLayout constraintLayout;
     ConstraintSet constraintSet;
 
@@ -72,6 +74,7 @@ public class TunerFragment extends Fragment {
         setContextualVariables();
         startTuner();
         setInstrumentSelectionSpinnerVariables();
+        setTuningSelectionSpinnerVariables();
     }
 
     @Override
@@ -150,7 +153,8 @@ public class TunerFragment extends Fragment {
         View view = getView();
         noteText = view.findViewById(R.id.note_text);
         deltaText = view.findViewById(R.id.delta_text);
-        instrumentSelectionSpinner = view.findViewById(R.id.instrument_selection_spinner);
+        instrumentSelectionSpinner = view.findViewById(R.id.instrument_selection_dropdown);
+        tuningSelectionSpinner = view.findViewById(R.id.tuning_selection_dropdown);
 
         constraintLayout = view.findViewById(R.id.tuner_constraint_layout);
         constraintSet = new ConstraintSet();
@@ -168,10 +172,27 @@ public class TunerFragment extends Fragment {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 context,
                 R.array.instruments_array,
-                android.R.layout.simple_spinner_item
+                R.layout.dropdown_item
         );
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.dropdown_item);
         instrumentSelectionSpinner.setAdapter(adapter);
+    }
+
+    private void setTuningSelectionSpinnerVariables() {
+        Context context = getContext();
+        if (context == null) {
+            System.out.println("WARNING: Couldn't find a context");
+            return;
+        }
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                context,
+                R.array.guitar_tunings,
+                R.layout.dropdown_item
+        );
+
+        adapter.setDropDownViewResource(R.layout.dropdown_item);
+        tuningSelectionSpinner.setAdapter(adapter);
     }
 }

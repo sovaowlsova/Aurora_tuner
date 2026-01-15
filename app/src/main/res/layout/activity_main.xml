@@ -18,34 +18,6 @@
         app:itemTextColor="@drawable/nav_bar_selector"
         app:itemIconTint="@drawable/nav_bar_selector"
         app:itemActiveIndicatorStyle="@style/App.Custom.Indicator">
-<!--
-        <com.google.android.material.tabs.TabLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabItem_news"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/news_icon"
-                android:text="@string/nav_news" />
-
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabItem_tuner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/tuner_icon"
-                android:text="@string/nav_tuner" />
-
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabItem_settings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/settings_icon"
-                android:text="@string/nav_settings" />
-
-        </com.google.android.material.tabs.TabLayout>
-        -->
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 
     <androidx.fragment.app.FragmentContainerView
@@ -59,5 +31,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph"/>
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/settings_text"
+        android:src="@drawable/settings_icon"
+        android:scaleType="fitCenter"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.97"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.015" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
