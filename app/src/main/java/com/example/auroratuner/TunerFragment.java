@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -35,8 +34,8 @@ public class TunerFragment extends Fragment {
     TextView deltaText;
     AutoCompleteTextView instrumentSelectionSpinner;
     AutoCompleteTextView tuningSelectionSpinner;
-    ConstraintLayout constraintLayout;
-    ConstraintSet constraintSet;
+    ConstraintLayout tunerSectionConstraintLayout;
+    ConstraintSet tunerSectionConstraintSet;
 
     ScheduledExecutorService tunerScheduler;
     AudioRecord record;
@@ -107,7 +106,6 @@ public class TunerFragment extends Fragment {
                 System.out.printf(Locale.US, "WARNING: couldn't read audio. res = %d%n", res);
             }
             double frequency = SoundProcessor.findPitch(buffer, SAMPLE_RATE);
-            // System.out.println(frequency);
             if (frequency < 0) {
                 return;
             }
@@ -122,8 +120,7 @@ public class TunerFragment extends Fragment {
                 float lineBias = 0.5f + BIAS_INTERVAL * mappedPercentsDelta;
                 float clampedLineBias = Math.max(MIN_LINE_BIAS, Math.min(MAX_LINE_BIAS, lineBias));
 
-                constraintSet.setHorizontalBias(R.id.measure_line, clampedLineBias);
-                System.out.println(frequency);
+                tunerSectionConstraintSet.setHorizontalBias(R.id.measure_line, clampedLineBias);
 
                 noteText.setText(String.format(Locale.US, "%s(%.2f)", baseNote.getName(), baseNote.getFrequency()));
                 deltaText.setText(baseNote.getSignedDelta(frequency, 2));
@@ -156,10 +153,10 @@ public class TunerFragment extends Fragment {
         instrumentSelectionSpinner = view.findViewById(R.id.instrument_selection_dropdown);
         tuningSelectionSpinner = view.findViewById(R.id.tuning_selection_dropdown);
 
-        constraintLayout = view.findViewById(R.id.tuner_constraint_layout);
-        constraintSet = new ConstraintSet();
-        constraintSet.clone(constraintLayout);
-        constraintLayout.setConstraintSet(constraintSet);
+        tunerSectionConstraintLayout = view.findViewById(R.id.tuner_section_layout);
+        tunerSectionConstraintSet = new ConstraintSet();
+        tunerSectionConstraintSet.clone(tunerSectionConstraintLayout);
+        tunerSectionConstraintLayout.setConstraintSet(tunerSectionConstraintSet);
     }
 
     private void setInstrumentSelectionSpinnerVariables() {
