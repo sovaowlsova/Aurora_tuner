@@ -3,18 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <ImageView
-        android:id="@+id/string2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/note_circle" />
+    android:layout_height="300dp">
 
     <ImageView
         android:id="@+id/string1"
@@ -22,11 +11,47 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.40"
+        app:layout_constraintVertical_bias="0.2"
         app:srcCompat="@drawable/note_circle" />
+
+    <TextView
+        android:id="@+id/note_text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="E#2"
+        android:textSize="20sp"
+        android:fontFamily="monospace"
+        app:layout_constraintBottom_toBottomOf="@+id/string1"
+        app:layout_constraintEnd_toEndOf="@+id/string1"
+        app:layout_constraintStart_toStartOf="@+id/string1"
+        app:layout_constraintTop_toTopOf="@+id/string1" />
+
+    <ImageView
+        android:id="@+id/string2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"
+        app:srcCompat="@drawable/note_circle" />
+
+    <TextView
+        android:id="@+id/note_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="E#2"
+        android:textSize="20sp"
+        android:fontFamily="monospace"
+        app:layout_constraintBottom_toBottomOf="@+id/string2"
+        app:layout_constraintEnd_toEndOf="@+id/string2"
+        app:layout_constraintStart_toStartOf="@+id/string2"
+        app:layout_constraintTop_toTopOf="@+id/string2" />
 
     <ImageView
         android:id="@+id/string3"
@@ -34,22 +59,23 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.60"
+        app:layout_constraintVertical_bias="0.8"
         app:srcCompat="@drawable/note_circle" />
 
-    <ImageView
-        android:id="@+id/string5"
+    <TextView
+        android:id="@+id/note_text3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.7"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/note_circle" />
+        android:text="E#2"
+        android:textSize="20sp"
+        android:fontFamily="monospace"
+        app:layout_constraintBottom_toBottomOf="@+id/string3"
+        app:layout_constraintEnd_toEndOf="@+id/string3"
+        app:layout_constraintStart_toStartOf="@+id/string3"
+        app:layout_constraintTop_toTopOf="@+id/string3" />
 
     <ImageView
         android:id="@+id/string4"
@@ -57,11 +83,47 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.7"
+        app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.40"
+        app:layout_constraintVertical_bias="0.2"
         app:srcCompat="@drawable/note_circle" />
+
+    <TextView
+        android:id="@+id/note_text4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="E#2"
+        android:textSize="20sp"
+        android:fontFamily="monospace"
+        app:layout_constraintBottom_toBottomOf="@+id/string4"
+        app:layout_constraintEnd_toEndOf="@+id/string4"
+        app:layout_constraintStart_toStartOf="@+id/string4"
+        app:layout_constraintTop_toTopOf="@+id/string4" />
+
+    <ImageView
+        android:id="@+id/string5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"
+        app:srcCompat="@drawable/note_circle" />
+
+    <TextView
+        android:id="@+id/note_text5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="E#2"
+        android:textSize="20sp"
+        android:fontFamily="monospace"
+        app:layout_constraintBottom_toBottomOf="@+id/string5"
+        app:layout_constraintEnd_toEndOf="@+id/string5"
+        app:layout_constraintStart_toStartOf="@+id/string5"
+        app:layout_constraintTop_toTopOf="@+id/string5" />
 
     <ImageView
         android:id="@+id/string6"
@@ -69,9 +131,22 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.7"
+        app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.60"
+        app:layout_constraintVertical_bias="0.8"
         app:srcCompat="@drawable/note_circle" />
+
+    <TextView
+        android:id="@+id/note_text6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="E#2"
+        android:textSize="20sp"
+        android:fontFamily="monospace"
+        app:layout_constraintBottom_toBottomOf="@+id/string6"
+        app:layout_constraintEnd_toEndOf="@+id/string6"
+        app:layout_constraintStart_toStartOf="@+id/string6"
+        app:layout_constraintTop_toTopOf="@+id/string6" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
