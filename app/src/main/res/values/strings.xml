@@ -3,6 +3,7 @@
     <string name="nav_news">Новости</string>
     <string name="nav_settings">Настройки</string>
     <string name="nav_tuner">Тюнер</string>
+    <string name="nav_editor">Редактор</string>
     <string name="tuner_text">Tuner</string>
     <string name="news_text">News</string>
     <string name="settings_text">Settings</string>
@@ -18,6 +19,7 @@
     <string name="instrument_guitar">Guitar</string>
     <string name="instrument_ukulele">Ukulele</string>
     <string name="standard_tuning">Standard</string>
+    <string name="editor_text">Editor</string>
 
     <string-array name="instruments_array">
         <item>@string/instrument_guitar</item>

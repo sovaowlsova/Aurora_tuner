@@ -11,7 +11,7 @@
         android:id="@+id/tunerFragment"
         android:icon="@drawable/tuner_icon"/>
     <item
-        android:title="@string/nav_settings"
-        android:id="@+id/settingsFragment"
-        android:icon="@drawable/settings_icon"/>
+        android:title="@string/nav_editor"
+        android:id="@+id/editorFragment"
+        android:icon="@drawable/editor_icon"/>
 </menu>
