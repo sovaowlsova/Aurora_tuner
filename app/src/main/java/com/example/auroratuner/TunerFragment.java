@@ -15,15 +15,17 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -37,12 +39,12 @@ public class TunerFragment extends Fragment {
     AutoCompleteTextView tuningSelectionSpinnerDropdown;
     ConstraintLayout tunerSectionConstraintLayout;
     ConstraintSet tunerSectionConstraintSet;
-
     ScheduledExecutorService tunerScheduler;
     AudioRecord record;
 
     private final String[] permissions = {Manifest.permission.RECORD_AUDIO};
     private String[] currentTunings;
+    private static final HashMap<String, Class<? extends Fragment>> commonInstruments;
 
     private final int SAMPLE_RATE = 44100;
     private final int BUFFER_SIZE = 8192;
@@ -52,6 +54,12 @@ public class TunerFragment extends Fragment {
     private final float MAX_NOTE_DELTA = 0.03f;
 
     private final float BIAS_INTERVAL = MAX_LINE_BIAS - 0.5f;
+
+    static {
+        commonInstruments = new HashMap<>();
+        commonInstruments.put("guitar", GuitarFragment.class);
+        commonInstruments.put("ukulele", UkuleleFragment.class);
+    }
 
     public TunerFragment() {
         // Required empty public constructor
@@ -180,19 +188,8 @@ public class TunerFragment extends Fragment {
         instrumentSelectionDropdown.setAdapter(adapter);
 
         instrumentSelectionDropdown.setOnItemClickListener((parent, view, position, id) -> {
-            String instrument = position < instrument_keys.length ? instrument_keys[position] : "other";
-
-            switch (instrument) {
-                case "guitar":
-                    System.out.println("Guitar");
-                    break;
-                case "ukulele":
-                    System.out.println("Ukulele");
-                    break;
-                default:
-                    System.out.println(instrument);
-                    break;
-            }
+            String instrument = position < instrument_keys.length ? instrument_keys[position] : (String)parent.getItemAtPosition(position);
+            switchInstrumentView(instrument);
         });
     }
 
@@ -211,5 +208,33 @@ public class TunerFragment extends Fragment {
 
         adapter.setDropDownViewResource(R.layout.dropdown_item);
         tuningSelectionSpinnerDropdown.setAdapter(adapter);
+    }
+
+    private void switchInstrumentView(String instrumentName) {
+        if (commonInstruments.containsKey(instrumentName)) {
+            System.out.println("Common instrument selected");
+            System.out.println(instrumentName);
+
+            Fragment newFragment = createNewInstance(commonInstruments.get(instrumentName));
+            if (newFragment == null) {
+                return;
+            }
+
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.instrument_view, newFragment)
+                    .commit();
+        }
+    }
+
+    private Fragment createNewInstance(Class<? extends Fragment> fragmentClass) {
+        try {
+            assert fragmentClass != null;
+            Constructor<? extends Fragment> constructor = fragmentClass.getDeclaredConstructor();
+            return constructor.newInstance();
+        } catch (Exception e) {
+            System.out.println("Error! Couldn't create a fragment");
+            return null;
+        }
     }
 }

@@ -30,6 +30,7 @@ import androidx.annotation.NonNull;
 public class MainActivity extends AppCompatActivity {
     String audioPermission = Manifest.permission.RECORD_AUDIO;
     private BottomNavigationView bottomNav;
+    private boolean firstStart = true;
 
 
     @Override
@@ -65,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
                 if (checkVal != PackageManager.PERMISSION_GRANTED &&
                         navController.getCurrentDestination().getId() != R.id.permissionFragment) {
                     navController.navigate(R.id.permissionFragment);
+                } else if (navController.getCurrentDestination().getId() == R.id.tunerFragment && !firstStart) {
+                    return false;
                 } else {
                     navController.navigate(R.id.tunerFragment);
                 }
@@ -78,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         bottomNav.setSelectedItemId(R.id.tunerFragment);
+        firstStart = false;
     }
 
     @Override
