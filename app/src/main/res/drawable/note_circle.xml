@@ -1,0 +1,10 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="50dp"
+    android:height="50dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:name="circle"
+        android:pathData="m49.92 1.88c26.51 0 48 21.49 48 48c0 26.51 -21.49 48 -48 48c-26.51 0 -48 -21.49 -48 -48c0 -26.51 21.49 -48 48 -48zm0 -2c-27.61 0 -50 22.39 -50 50c0 27.61 22.39 50 50 50c27.61 0 50 -22.39 50 -50c0 -27.61 -22.39 -50 -50 -50z"
+        android:fillColor="@color/colorAccent" />
+</vector>

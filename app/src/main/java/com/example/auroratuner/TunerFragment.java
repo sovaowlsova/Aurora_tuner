@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
@@ -32,8 +33,8 @@ public class TunerFragment extends Fragment {
 
     TextView noteText;
     TextView deltaText;
-    AutoCompleteTextView instrumentSelectionSpinner;
-    AutoCompleteTextView tuningSelectionSpinner;
+    AutoCompleteTextView instrumentSelectionDropdown;
+    AutoCompleteTextView tuningSelectionSpinnerDropdown;
     ConstraintLayout tunerSectionConstraintLayout;
     ConstraintSet tunerSectionConstraintSet;
 
@@ -41,6 +42,7 @@ public class TunerFragment extends Fragment {
     AudioRecord record;
 
     private final String[] permissions = {Manifest.permission.RECORD_AUDIO};
+    private String[] currentTunings;
 
     private final int SAMPLE_RATE = 44100;
     private final int BUFFER_SIZE = 8192;
@@ -150,8 +152,8 @@ public class TunerFragment extends Fragment {
         View view = getView();
         noteText = view.findViewById(R.id.note_text);
         deltaText = view.findViewById(R.id.delta_text);
-        instrumentSelectionSpinner = view.findViewById(R.id.instrument_selection_dropdown);
-        tuningSelectionSpinner = view.findViewById(R.id.tuning_selection_dropdown);
+        instrumentSelectionDropdown = view.findViewById(R.id.instrument_selection_dropdown);
+        tuningSelectionSpinnerDropdown = view.findViewById(R.id.tuning_selection_dropdown);
 
         tunerSectionConstraintLayout = view.findViewById(R.id.tuner_section_layout);
         tunerSectionConstraintSet = new ConstraintSet();
@@ -160,6 +162,8 @@ public class TunerFragment extends Fragment {
     }
 
     private void setInstrumentSelectionSpinnerVariables() {
+        String[] instrument_keys = getResources().getStringArray(R.array.instrument_array_keys);
+
         Context context = getContext();
         if (context == null) {
             System.out.println("WARNING: Couldn't find a context");
@@ -173,7 +177,23 @@ public class TunerFragment extends Fragment {
         );
 
         adapter.setDropDownViewResource(R.layout.dropdown_item);
-        instrumentSelectionSpinner.setAdapter(adapter);
+        instrumentSelectionDropdown.setAdapter(adapter);
+
+        instrumentSelectionDropdown.setOnItemClickListener((parent, view, position, id) -> {
+            String instrument = position < instrument_keys.length ? instrument_keys[position] : "other";
+
+            switch (instrument) {
+                case "guitar":
+                    System.out.println("Guitar");
+                    break;
+                case "ukulele":
+                    System.out.println("Ukulele");
+                    break;
+                default:
+                    System.out.println(instrument);
+                    break;
+            }
+        });
     }
 
     private void setTuningSelectionSpinnerVariables() {
@@ -190,6 +210,6 @@ public class TunerFragment extends Fragment {
         );
 
         adapter.setDropDownViewResource(R.layout.dropdown_item);
-        tuningSelectionSpinner.setAdapter(adapter);
+        tuningSelectionSpinnerDropdown.setAdapter(adapter);
     }
 }

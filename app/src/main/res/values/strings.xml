@@ -11,17 +11,22 @@
     <string name="note_text_placeholder">Play something</string>
     <string name="measure_description">musical note measure</string>
     <string name="measure_line_description">current deviation from note</string>
-    <string name="instrument_guitar">Guitar</string>
-    <string name="instrument_ukulele">Ukulele</string>
     <string name="instrument_selector_hint">instrument</string>
     <string name="tuning_selector_hint">tuning</string>
-    <string name="standard_tuning">Standard</string>
     <string name="instrument_selector_label">instrument selection</string>
     <string name="tuning_selector_label">tuning selection</string>
+    <string name="instrument_guitar">Guitar</string>
+    <string name="instrument_ukulele">Ukulele</string>
+    <string name="standard_tuning">Standard</string>
     
     <string-array name="instruments_array">
         <item>@string/instrument_guitar</item>
         <item>@string/instrument_ukulele</item>
+    </string-array>
+    
+    <string-array name="instrument_array_keys">
+        <item>guitar</item>
+        <item>ukulele</item>
     </string-array>
 
     <string-array name="guitar_tunings">
