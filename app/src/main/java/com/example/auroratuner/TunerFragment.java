@@ -109,7 +109,7 @@ public class TunerFragment extends Fragment {
         record.startRecording();
 
         tunerScheduler = Executors.newScheduledThreadPool(1);
-        tunerScheduler.scheduleAtFixedRate(() -> {
+        tunerScheduler.scheduleWithFixedDelay(() -> {
             short[] buffer = new short[BUFFER_SIZE];
             int res = record.read(buffer, 0, BUFFER_SIZE);
             if (res < BUFFER_SIZE) {
