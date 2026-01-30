@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Locale;
@@ -84,6 +85,15 @@ public class TunerFragment extends Fragment {
         startTuner();
         setInstrumentSelectionSpinnerVariables();
         setTuningSelectionSpinnerVariables();
+
+        TuningFileParser testParser = new TuningFileParser(getContext());
+        try {
+            Tuning testTuning = testParser.parseFile("tunings/tuning_guitar6_openE.json");
+            System.out.println("Got a tuning!");
+            System.out.println("Name: " + testTuning.getTuningName());
+            System.out.println("Instrument: " + testTuning.getInstrumentId());
+            System.out.println("Tuning: " + testTuning.getTuning().toString());
+        } catch (Exception ignored) {}
     }
 
     @Override
@@ -119,7 +129,7 @@ public class TunerFragment extends Fragment {
             if (frequency < 0) {
                 return;
             }
-            Note baseNote = SoundProcessor.frequencyToNote(frequency);
+            Note baseNote = Note.frequencyToNote(frequency);
             if (baseNote == null) {
                 return;
             }

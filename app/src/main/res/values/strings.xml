@@ -20,6 +20,7 @@
     <string name="instrument_ukulele">Ukulele</string>
     <string name="standard_tuning">Standard</string>
     <string name="editor_text">Editor</string>
+    <string name="invalid_note_error">Invalid note name</string>
 
     <string-array name="instruments_array">
         <item>@string/instrument_guitar</item>

@@ -1,22 +1,51 @@
 package com.example.auroratuner;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class Tuning {
-    private final String instrumentName;
+    private final String instrumentId;
     private final String tuningName;
-    private final List<Note> tuning;
+    private List<Note> tuning;
 
-    public Tuning(String instrumentName, String tuningName, Note[] tuning) {
-        this.instrumentName = instrumentName;
+    public Tuning(String instrumentId, String tuningName, Note[] tuning) {
+        this.instrumentId = instrumentId;
         this.tuningName = tuningName;
         this.tuning = Arrays.asList(tuning.clone());
     }
 
-    public String getInstrumentName() {
-        return instrumentName;
+    @JsonCreator
+    private Tuning(
+            @JsonProperty("instrumentId") String instrumentId,
+            @JsonProperty("tuningName") String tuningName,
+            @JsonProperty("tuning") List<String> tuning
+    ) {
+        this.instrumentId = instrumentId;
+        this.tuningName = tuningName;
+        this.tuning = new ArrayList<>();
+        // for cycle instead of stream for better logging
+        for (String noteName : tuning) {
+            try {
+                Note note = Note.nameToNote(noteName);
+                this.tuning.add(note);
+            } catch (IllegalArgumentException e) {
+                // TODO: add warning for the user
+                System.out.println("Couldn't find note " + noteName);
+            }
+        }
+    }
+
+    public String getTuningName() {
+        return tuningName;
+    }
+
+    public String getInstrumentId() {
+        return instrumentId;
     }
 
     public List<Note> getTuning() {

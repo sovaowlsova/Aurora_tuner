@@ -1,6 +1,9 @@
 package com.example.auroratuner;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public enum Note {
     C0("C0", 16.35),
@@ -12,15 +15,17 @@ public enum Note {
     C6("C6", 1046.5),
     C7("C7", 2093),
     C8("C8", 4186),
-    C0sharp("C0#", 17.32),
-    C1sharp("C1#", 34.65),
-    C2sharp("C2#", 69.3),
-    C3sharp("C3#", 138.59),
-    C4sharp("C4#", 277.18),
-    C5sharp("C5#", 554.37),
-    C6sharp("C6#", 1108.73),
-    C7sharp("C7#", 2217.46),
-    C8sharp("C8#", 4434.92),
+
+    C0sharp("C#0", 17.32),
+    C1sharp("C#1", 34.65),
+    C2sharp("C#2", 69.3),
+    C3sharp("C#3", 138.59),
+    C4sharp("C#4", 277.18),
+    C5sharp("C#5", 554.37),
+    C6sharp("C#6", 1108.73),
+    C7sharp("C#7", 2217.46),
+    C8sharp("C#8", 4434.92),
+
     D0("D0", 18.35),
     D1("D1", 36.71),
     D2("D2", 73.42),
@@ -30,15 +35,17 @@ public enum Note {
     D6("D6", 1174.66),
     D7("D7", 2349.32),
     D8("D8", 4698.63),
-    D0sharp("D0#", 19.45),
-    D1sharp("D1#", 38.89),
-    D2sharp("D2#", 77.78),
-    D3sharp("D3#", 155.56),
-    D4sharp("D4#", 311.13),
-    D5sharp("D5#", 622.25),
-    D6sharp("D6#", 1244.51),
-    D7sharp("D7#", 2489),
-    D8sharp("D8#", 4978),
+
+    D0sharp("D#0", 19.45),
+    D1sharp("D#1", 38.89),
+    D2sharp("D#2", 77.78),
+    D3sharp("D#3", 155.56),
+    D4sharp("D#4", 311.13),
+    D5sharp("D#5", 622.25),
+    D6sharp("D#6", 1244.51),
+    D7sharp("D#7", 2489),
+    D8sharp("D#8", 4978),
+
     E0("E0", 20.6),
     E1("E1", 41.2),
     E2("E2", 82.41),
@@ -48,6 +55,7 @@ public enum Note {
     E6("E6", 1318.51),
     E7("E7", 2637),
     E8("E8", 5274),
+
     F0("F0", 21.83),
     F1("F1", 43.65),
     F2("F2", 87.31),
@@ -57,15 +65,17 @@ public enum Note {
     F6("F6", 1396.91),
     F7("F7", 2793.83),
     F8("F8", 5587.65),
-    F0sharp("F0#", 23.12),
-    F1sharp("F1#", 46.25),
-    F2sharp("F2#", 92.5),
-    F3sharp("F3#", 185),
-    F4sharp("F4#", 369.99),
-    F5sharp("F5#", 739.99),
-    F6sharp("F6#", 1479.98),
-    F7sharp("F7#", 2959.96),
-    F8sharp("F8#", 5919.91),
+
+    F0sharp("F#0", 23.12),
+    F1sharp("F#1", 46.25),
+    F2sharp("F#2", 92.5),
+    F3sharp("F#3", 185),
+    F4sharp("F#4", 369.99),
+    F5sharp("F#5", 739.99),
+    F6sharp("F#6", 1479.98),
+    F7sharp("F#7", 2959.96),
+    F8sharp("F#8", 5919.91),
+
     G0("G0", 24.5),
     G1("G1", 49),
     G2("G2", 98),
@@ -75,15 +85,17 @@ public enum Note {
     G6("G6", 1567.98),
     G7("G7", 3135.96),
     G8("G8", 6271.93),
-    G0sharp("G0#", 25.96),
-    G1sharp("G1#", 51.91),
-    G2sharp("G2#", 103.83),
-    G3sharp("G3#", 207.65),
-    G4sharp("G4#", 415.3),
-    G5sharp("G5#", 830.61),
-    G6sharp("G6#", 1661.22),
-    G7sharp("G7#", 3322.44),
-    G8sharp("G8#", 6644.88),
+
+    G0sharp("G#0", 25.96),
+    G1sharp("G#1", 51.91),
+    G2sharp("G#2", 103.83),
+    G3sharp("G#3", 207.65),
+    G4sharp("G#4", 415.3),
+    G5sharp("G#5", 830.61),
+    G6sharp("G#6", 1661.22),
+    G7sharp("G#7", 3322.44),
+    G8sharp("G#8", 6644.88),
+
     A0("A0", 27.5),
     A1("A1", 55),
     A2("A2", 110),
@@ -93,15 +105,17 @@ public enum Note {
     A6("A6", 1760),
     A7("A7", 3520),
     A8("A8", 7040),
-    A0sharp("A0#", 29.14),
-    A1sharp("A1#", 58.27),
-    A2sharp("A2#", 116.54),
-    A3sharp("A3#", 233.08),
-    A4sharp("A4#", 466.16),
-    A5sharp("A5#", 932.33),
-    A6sharp("A6#", 1864.66),
-    A7sharp("A7#", 3729.31),
-    A8sharp("A8#", 7458.62),
+
+    A0sharp("A#0", 29.14),
+    A1sharp("A#1", 58.27),
+    A2sharp("A#2", 116.54),
+    A3sharp("A#3", 233.08),
+    A4sharp("A#4", 466.16),
+    A5sharp("A#5", 932.33),
+    A6sharp("A#6", 1864.66),
+    A7sharp("A#7", 3729.31),
+    A8sharp("A#8", 7458.62),
+
     B0("B0", 30.87),
     B1("B1", 61.74),
     B2("B2", 123.47),
@@ -112,12 +126,56 @@ public enum Note {
     B7("B7", 3951),
     B8("B8", 7902.13);
 
+    private static final Map<String, Note> MAP_NAME_TO_NOTE = new HashMap<>();
+
+    static {
+        Arrays.stream(values()).forEach(n -> MAP_NAME_TO_NOTE.put(n.name, n));
+    }
+
     private final String name;
     private final double frequency;
 
     Note(String name, double frequency) {
         this.name = name;
         this.frequency = frequency;
+    }
+
+    /**
+     * Maps frequency to note
+     *
+     * @param frequency frequency of the note
+     *
+     * @return name of the note (C0, A5, G3#)
+     */
+    public static Note frequencyToNote(double frequency) {
+        Octave foundOctave = null;
+        for (Octave octave : Octave.values()) {
+            if (octave.getLowestFrequency() <= frequency && frequency < octave.getHighestFrequency()) {
+                foundOctave = octave;
+                break;
+            }
+        }
+
+        // Pretty unrealistic but what if
+        if (foundOctave == null) {
+            if (frequency >= Octave.Eighth.getHighestFrequency()) {
+                foundOctave = Octave.Eighth;
+            } else if (frequency <= Octave.Zero.getLowestFrequency()) {
+                foundOctave = Octave.Zero;
+            } else {
+                return null;
+            }
+        }
+
+        return foundOctave.getClosestNote(frequency);
+    }
+
+    public static Note nameToNote(String name) throws IllegalArgumentException {
+        Note note = MAP_NAME_TO_NOTE.get(name);
+        if (note == null) {
+            throw new IllegalArgumentException("Invalid note name");
+        }
+        return note;
     }
 
     public String getName() {
