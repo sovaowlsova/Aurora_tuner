@@ -1,0 +1,31 @@
+package com.example.auroratuner;
+
+import android.content.Context;
+
+public enum BuiltInInstruments {
+    Guitar6(R.string.instrument_guitar, "guitar6",
+            new Tuning[] {BuiltInTunings.Guitar6Standard.get(), BuiltInTunings.Guitar6DropD.get()}),
+    Ukulele(R.string.instrument_ukulele, "ukulele",
+            new Tuning[] {BuiltInTunings.UkuleleStandard.get()});
+    private final int displayNameResId;
+    private final String idName;
+    private final Tuning[] builtInTunings;
+
+    BuiltInInstruments(int displayNameResId, String idName, Tuning[] builtInTunings) {
+        this.displayNameResId = displayNameResId;
+        this.idName = idName;
+        this.builtInTunings = builtInTunings;
+    }
+
+    public String getDisplayName(Context context) {
+        return context.getResources().getString(displayNameResId);
+    }
+
+    public String getIdName() {
+        return idName;
+    }
+
+    public Tuning[] getBuiltInTunings() {
+        return builtInTunings.clone();
+    }
+}

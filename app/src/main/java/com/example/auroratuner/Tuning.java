@@ -4,28 +4,30 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class Tune {
+public class Tuning {
     private final String instrumentName;
-    private final List<Note> strings;
+    private final String tuningName;
+    private final List<Note> tuning;
 
-    public Tune(String instrumentName, Note[] notes) {
+    public Tuning(String instrumentName, String tuningName, Note[] tuning) {
         this.instrumentName = instrumentName;
-        this.strings = Arrays.asList(notes.clone());
+        this.tuningName = tuningName;
+        this.tuning = Arrays.asList(tuning.clone());
     }
 
     public String getInstrumentName() {
         return instrumentName;
     }
 
-    public List<Note> getStrings() {
-        return Collections.unmodifiableList(strings);
+    public List<Note> getTuning() {
+        return Collections.unmodifiableList(tuning);
     }
 
     public Note getClosestString(double frequency) {
         double minDelta = Double.MAX_VALUE;
         Note closestString = null;
 
-        for (Note string : strings) {
+        for (Note string : tuning) {
             double delta = Math.abs(string.getDelta(frequency));
             if (Math.abs(string.getDelta(frequency)) < minDelta) {
                 minDelta = delta;
