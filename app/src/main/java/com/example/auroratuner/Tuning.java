@@ -58,7 +58,7 @@ public class Tuning {
 
         for (Note string : tuning) {
             double delta = Math.abs(string.getDelta(frequency));
-            if (Math.abs(string.getDelta(frequency)) < minDelta) {
+            if (delta < minDelta) {
                 minDelta = delta;
                 closestString = string;
             }
