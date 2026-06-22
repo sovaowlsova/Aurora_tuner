@@ -22,11 +22,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -67,6 +71,19 @@ public class TunerFragment extends Fragment {
     }
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (!hidden) {
+            startTuner();
+        } else {
+            stopTuner();
+            noteText.setText(R.string.note_text_placeholder);
+            noteText.setTextColor(Color.parseColor("#FFFFFF"));
+            tunerSectionConstraintSet.setHorizontalBias(R.id.measure_line, 0.5f);
+            deltaText.setText("");
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -82,18 +99,23 @@ public class TunerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setContextualVariables();
+        view.post(() -> {
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.instrument_view, createNewInstance(GuitarFragment.class))
+                    .commit();
+        });
         startTuner();
         setInstrumentSelectionSpinnerVariables();
         setTuningSelectionSpinnerVariables();
-
-        TuningFileParser testParser = new TuningFileParser(getContext());
-        try {
-            Tuning testTuning = testParser.parseFile("tunings/tuning_guitar6_openE.json");
-            System.out.println("Got a tuning!");
-            System.out.println("Name: " + testTuning.getTuningName());
-            System.out.println("Instrument: " + testTuning.getInstrumentId());
-            System.out.println("Tuning: " + testTuning.getTuning().toString());
-        } catch (Exception ignored) {}
+//        TuningFileParser testParser = new TuningFileParser(getContext());
+//        try {
+//            Tuning testTuning = testParser.parseFile("tunings/tuning_guitar6_openE.json");
+//            System.out.println("Got a tuning!");
+//            System.out.println("Name: " + testTuning.getTuningName());
+//            System.out.println("Instrument: " + testTuning.getInstrumentId());
+//            System.out.println("Tuning: " + testTuning.getTuning().toString());
+//        } catch (Exception ignored) {}
     }
 
     @Override
@@ -235,6 +257,14 @@ public class TunerFragment extends Fragment {
                     .replace(R.id.instrument_view, newFragment)
                     .commit();
         }
+    }
+
+    private List<Tuning> getInstrumentTunings(String instrumentId) {
+        List<Tuning> tunings = new ArrayList<>();
+        if (Arrays.stream(BuiltInInstruments.values()).anyMatch(instrument -> instrument.getIdName().equals(instrumentId))) {
+            tunings.addAll(Arrays.asList(BuiltInInstruments.valueOf(instrumentId).getBuiltInTunings()));
+        }
+        return tunings;
     }
 
     private Fragment createNewInstance(Class<? extends Fragment> fragmentClass) {

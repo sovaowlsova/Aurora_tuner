@@ -1,7 +1,9 @@
 package com.example.auroratuner;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.app.LoaderManager;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
@@ -29,8 +31,14 @@ import androidx.annotation.NonNull;
 
 public class MainActivity extends AppCompatActivity {
     String audioPermission = Manifest.permission.RECORD_AUDIO;
+
+    private static final int MAIN_VIEW_ID = R.id.mainView;
+    private Fragment currentFragment;
+    private Fragment tunerFragment;
+    private Fragment newsFragment;
+    private Fragment editorFragment;
+    private Fragment permissionFragment;
     private BottomNavigationView bottomNav;
-    private boolean firstStart = true;
 
 
     @Override
@@ -38,6 +46,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bottomNav = findViewById(R.id.bottomNavigationPanel);
+
+        // Creating fragments for further use
+        tunerFragment = new TunerFragment();
+        newsFragment = new NewsFragment();
+        editorFragment = new EditorFragment();
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                        .add(MAIN_VIEW_ID, newsFragment)
+                        .add(MAIN_VIEW_ID, editorFragment)
+                        .hide(newsFragment)
+                        .hide(editorFragment);
+
+        int checkVal = getBaseContext().checkSelfPermission(audioPermission);
+        if (checkVal != PackageManager.PERMISSION_GRANTED) {
+            permissionFragment = new PermissionFragment();
+            transaction.add(MAIN_VIEW_ID, permissionFragment);
+        } else {
+            transaction.add(MAIN_VIEW_ID, tunerFragment);
+        }
+        transaction.commitNow();
+
         configureNavMenu();
     }
 
@@ -54,34 +83,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configureNavMenu() {
-        final NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.mainView);
-        assert navHostFragment != null;
-        NavController navController = navHostFragment.getNavController();
-
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
+            Fragment targetFragment = null;
 
             if (id == R.id.tunerFragment) {
                 int checkVal = getBaseContext().checkSelfPermission(audioPermission);
-                if (checkVal != PackageManager.PERMISSION_GRANTED &&
-                        navController.getCurrentDestination().getId() != R.id.permissionFragment) {
-                    navController.navigate(R.id.permissionFragment);
-                } else if (navController.getCurrentDestination().getId() == R.id.tunerFragment && !firstStart) {
-                    return false;
+                if (checkVal != PackageManager.PERMISSION_GRANTED) {
+                    targetFragment = permissionFragment;
                 } else {
-                    navController.navigate(R.id.tunerFragment);
+                    targetFragment = tunerFragment;
                 }
-                return true;
-            } else if (id == navController.getCurrentDestination().getId()) {
-                    return false;
-            } else {
-                navController.navigate(id);
+            } else if (id == R.id.newsFragment) {
+                targetFragment = newsFragment;
+            } else if (id == R.id.editorFragment) {
+                targetFragment = editorFragment;
+            }
+
+            if (targetFragment != null && targetFragment != currentFragment) {
+                switchMainView(targetFragment);
                 return true;
             }
+            return false;
         });
 
         bottomNav.setSelectedItemId(R.id.tunerFragment);
-        firstStart = false;
+    }
+
+    private void switchMainView(Fragment targetFragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setTransition(FragmentTransaction.TRANSIT_NONE);
+        transaction.setReorderingAllowed(true);
+        if (currentFragment != null) {
+            transaction.hide(currentFragment);
+        }
+        transaction.show(targetFragment).commit();
+        currentFragment = targetFragment;
     }
 
     @Override
@@ -91,7 +128,16 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PermissionID.REQUEST_RECORD_AUDIO_PERMISSION.get() &&
         grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            bottomNav.setSelectedItemId(R.id.tunerFragment);
+            if (permissionFragment != null) {
+                getSupportFragmentManager().beginTransaction()
+                        .remove(permissionFragment)
+                        .add(MAIN_VIEW_ID, tunerFragment)
+                        .commitNow();
+                permissionFragment = null;
+            }
+            if (tunerFragment != null) {
+                bottomNav.setSelectedItemId(R.id.tunerFragment);
+            }
         }
     }
 }

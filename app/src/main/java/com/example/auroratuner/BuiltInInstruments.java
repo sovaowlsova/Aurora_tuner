@@ -3,9 +3,9 @@ package com.example.auroratuner;
 import android.content.Context;
 
 public enum BuiltInInstruments {
-    Guitar6(R.string.instrument_guitar, "guitar6",
+    Guitar6(R.string.instrument_guitar, "Guitar6",
             new Tuning[] {BuiltInTunings.Guitar6Standard.get(), BuiltInTunings.Guitar6DropD.get()}),
-    Ukulele(R.string.instrument_ukulele, "ukulele",
+    Ukulele(R.string.instrument_ukulele, "Ukulele",
             new Tuning[] {BuiltInTunings.UkuleleStandard.get()});
     private final int displayNameResId;
     private final String idName;

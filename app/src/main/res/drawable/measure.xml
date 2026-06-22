@@ -3,48 +3,20 @@
     android:height="100dp"
     android:viewportWidth="410"
     android:viewportHeight="201">
+
+    <!-- Все прямоугольники одной командой -->
     <path
         android:fillColor="@color/measureColor"
-        android:name="Rectangle 1"
-        android:pathData="m200 0h10v201h-10v-201z" />
-    <path
-        android:fillColor="@color/measureColor"
-        android:name="Rectangle 2"
-        android:pathData="m240 60h10v80h-10v-80z" />
-    <path
-        android:fillColor="@color/measureColor"
-        android:name="Rectangle 3"
-        android:pathData="m280 60h10v80h-10v-80z" />
-    <path
-        android:fillColor="@color/measureColor"
-        android:name="Rectangle 4"
-        android:pathData="m320 60h10v80h-10v-80z" />
-    <path
-        android:fillColor="@color/measureColor"
-        android:name="Rectangle 5"
-        android:pathData="m360 60h10v80h-10v-80z" />
-    <path
-        android:fillColor="@color/measureColor"
-        android:name="Rectangle 6"
-        android:pathData="m400 40h10v120h-10v-120z" />
-    <path
-        android:fillColor="@color/measureColor"
-        android:name="Rectangle 7"
-        android:pathData="m160 60h10v80h-10v-80z" />
-    <path
-        android:fillColor="@color/measureColor"
-        android:name="Rectangle 8"
-        android:pathData="m40 60h10v80h-10v-80z" />
-    <path
-        android:fillColor="@color/measureColor"
-        android:name="Rectangle 9"
-        android:pathData="m80 60h10v80h-10v-80z" />
-    <path
-        android:fillColor="@color/measureColor"
-        android:name="Rectangle 10"
-        android:pathData="m120 60h10v80h-10v-80z" />
-    <path
-        android:fillColor="@color/measureColor"
-        android:name="Rectangle 11"
-        android:pathData="m0 40h10v120h-10v-120z" />
+        android:pathData="
+            M200,0 h10 v201 h-10 z
+            M240,60 h10 v80 h-10 z
+            M280,60 h10 v80 h-10 z
+            M320,60 h10 v80 h-10 z
+            M360,60 h10 v80 h-10 z
+            M400,40 h10 v120 h-10 z
+            M160,60 h10 v80 h-10 z
+            M40,60 h10 v80 h-10 z
+            M80,60 h10 v80 h-10 z
+            M120,60 h10 v80 h-10 z
+            M0,40 h10 v120 h-10 z" />
 </vector>
