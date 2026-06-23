@@ -1,24 +1,24 @@
 package com.example.auroratuner;
 
+import android.content.Context;
+
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class Instrument {
+public abstract class Instrument {
     private final String id;
-    private final String name;
-    List<Tuning> tunings;
+    private final List<Tuning> tunings;
 
 
-    public Instrument(String id, String name) {
+    public Instrument(String id) {
         this.id = id;
-        this.name = name;
         tunings = new ArrayList<>();
     }
 
-    public Instrument(String id, String name, List<Tuning> tunings) {
+    public Instrument(String id, List<Tuning> tunings) {
         this.id = id;
-        this.name = name;
         this.tunings = List.copyOf(tunings);
     }
 
@@ -26,15 +26,24 @@ public class Instrument {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public void addTuning(Tuning tuning) {
         tunings.add(tuning);
     }
 
     public List<Tuning> getTunings() {
-        return Collections.unmodifiableList(tunings);
+        return new ArrayList<>(tunings);
+    }
+
+    public abstract String getName(Context context);
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Instrument that)) {
+            return false;
+        }
+        return id.equals(that.id);
     }
 }

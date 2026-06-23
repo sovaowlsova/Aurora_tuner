@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class TunerFragment extends Fragment {
 
@@ -210,10 +211,21 @@ public class TunerFragment extends Fragment {
             return;
         }
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+//                context,
+//                R.array.instruments_array,
+//                R.layout.dropdown_item
+//        );
+
+        List<String> instrumentNames = InstrumentRegistry.getInstance().getAll()
+                .stream()
+                .map(inst -> inst.getName(context))
+                .collect(Collectors.toList());
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 context,
-                R.array.instruments_array,
-                R.layout.dropdown_item
+                R.layout.dropdown_item,
+                instrumentNames
         );
 
         adapter.setDropDownViewResource(R.layout.dropdown_item);
@@ -260,11 +272,8 @@ public class TunerFragment extends Fragment {
     }
 
     private List<Tuning> getInstrumentTunings(String instrumentId) {
-        List<Tuning> tunings = new ArrayList<>();
-        if (Arrays.stream(BuiltInInstruments.values()).anyMatch(instrument -> instrument.getIdName().equals(instrumentId))) {
-            tunings.addAll(Arrays.asList(BuiltInInstruments.valueOf(instrumentId).getBuiltInTunings()));
-        }
-        return tunings;
+        Instrument currentInstrument = InstrumentRegistry.getInstance().getById(instrumentId);
+        return currentInstrument.getTunings();
     }
 
     private Fragment createNewInstance(Class<? extends Fragment> fragmentClass) {
