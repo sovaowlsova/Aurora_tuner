@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.auroratuner"
+    namespace = "com.sovaowlsova.auroratuner"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.auroratuner"
+        applicationId = "com.sovaowlsova.auroratuner"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
