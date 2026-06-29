@@ -22,6 +22,7 @@
     <string name="editor_text">Editor</string>
     <string name="invalid_note_error">Invalid note name</string>
     <string name="audio_reading_error">Audio reading error</string>
+    <string name="audio_permission_error">Please give audio permission</string>
 
     <string-array name="instruments_array">
         <item>@string/instrument_guitar</item>

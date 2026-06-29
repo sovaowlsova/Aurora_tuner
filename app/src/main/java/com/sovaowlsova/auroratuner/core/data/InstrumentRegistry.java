@@ -12,6 +12,7 @@ import java.util.List;
 
 public class InstrumentRegistry {
     private static InstrumentRegistry instance;
+    // A list because dropdowns in TunerFragment are dependent on the order
     private final List<Instrument> instruments;
     private final HashSet<String> uniqueIds;
 
@@ -29,8 +30,8 @@ public class InstrumentRegistry {
     }
 
     private void registerBuiltIn() {
-        register(new BuiltInInstrument("Guitar6", R.string.instrument_guitar, List.of(BuiltInTunings.Guitar6Standard.get(), BuiltInTunings.Guitar6DropD.get())));
-        register(new BuiltInInstrument("Ukulele", R.string.instrument_ukulele, List.of(BuiltInTunings.UkuleleStandard.get())));
+        register(new BuiltInInstrument(BuiltInInstrumentId.GUITAR_6.get(), R.string.instrument_guitar, List.of(BuiltInTunings.Guitar6Standard.get(), BuiltInTunings.Guitar6DropD.get())));
+        register(new BuiltInInstrument(BuiltInInstrumentId.UKULELE.get(), R.string.instrument_ukulele, List.of(BuiltInTunings.UkuleleStandard.get())));
     }
 
     public List<Instrument> getAll() {

@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class TunerEngine {
     private final int sampleRate;
     private final AudioCapture audioCapture;
+    private ScheduledExecutorService scheduler;
 
     public TunerEngine(AudioCapture audioCapture, int sampleRate) {
         this.audioCapture = audioCapture;
@@ -24,13 +25,12 @@ public class TunerEngine {
         void onAudioReadingError();
     }
 
-    public boolean start(Context context, Callback callback) {
+    public boolean startTuner(Context context, Callback callback) {
         boolean success = audioCapture.start(context);
         if (!success) {
             return false;
         }
-
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleWithFixedDelay(() -> {
             short[] buffer = audioCapture.read();
             if (buffer.length == 0) {
@@ -46,5 +46,14 @@ public class TunerEngine {
             callback.onNoteDetected(note, frequency);
         }, 0, 100, TimeUnit.MILLISECONDS);
         return true;
+    }
+
+    public void stopTuner() {
+        if (scheduler == null) {
+            System.out.println("Scheduler is null");
+            return;
+        }
+        scheduler.shutdown();
+        audioCapture.stop();
     }
 }

@@ -41,7 +41,7 @@ public class Tuning {
         }
     }
 
-    public String getTuningName() {
+    public String getName() {
         return tuningName;
     }
 

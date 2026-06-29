@@ -6,7 +6,7 @@ import com.sovaowlsova.auroratuner.tuner.ui.TunerEngine;
 public class AppContainer {
     private final int SAMPLE_RATE = 44100;
     private final int BUFFER_SIZE = 8192;
-    private AppContainer instance;
+    private static AppContainer instance;
 
     TunerEngine tunerEngine;
 
@@ -15,7 +15,7 @@ public class AppContainer {
         tunerEngine = new TunerEngine(audioCapture, SAMPLE_RATE);
     }
 
-    public AppContainer getInstance() {
+    public static AppContainer getInstance() {
         if (instance == null) {
             instance = new AppContainer();
         }

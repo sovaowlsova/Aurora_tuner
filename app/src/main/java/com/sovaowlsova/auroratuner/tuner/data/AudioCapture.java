@@ -36,8 +36,11 @@ public class AudioCapture {
 
     public boolean start(Context context) {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: PLEASE PLEASE HANDLE THIS SITUATION LATER
             return false;
+        }
+        if (audioRecord != null) {
+            System.out.println("Recording is already started");
+            return true;
         }
         audioRecord = new AudioRecord(
                 MediaRecorder.AudioSource.MIC,
@@ -54,6 +57,8 @@ public class AudioCapture {
             audioRecord.stop();
             audioRecord.release();
             audioRecord = null;
+        } else {
+            System.out.println("Trying to stop already stopped AudioCapture");
         }
     }
 }
