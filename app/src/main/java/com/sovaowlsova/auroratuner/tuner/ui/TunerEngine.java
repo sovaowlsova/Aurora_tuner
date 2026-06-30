@@ -14,6 +14,7 @@ public class TunerEngine {
     private final int sampleRate;
     private final AudioCapture audioCapture;
     private ScheduledExecutorService scheduler;
+    private boolean tunerStarted = false;
 
     public TunerEngine(AudioCapture audioCapture, int sampleRate) {
         this.audioCapture = audioCapture;
@@ -26,10 +27,15 @@ public class TunerEngine {
     }
 
     public boolean startTuner(Context context, Callback callback) {
+        if (tunerStarted) {
+            System.out.println("The tuner is already started");
+            return true;
+        }
         boolean success = audioCapture.start(context);
         if (!success) {
             return false;
         }
+        tunerStarted = true;
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleWithFixedDelay(() -> {
             short[] buffer = audioCapture.read();
@@ -49,11 +55,12 @@ public class TunerEngine {
     }
 
     public void stopTuner() {
+        tunerStarted = false;
         if (scheduler == null) {
             System.out.println("Scheduler is null");
             return;
         }
-        scheduler.shutdown();
+        scheduler.shutdownNow();
         audioCapture.stop();
     }
 }

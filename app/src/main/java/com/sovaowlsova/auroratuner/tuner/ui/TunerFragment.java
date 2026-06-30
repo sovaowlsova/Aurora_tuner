@@ -18,21 +18,25 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sovaowlsova.auroratuner.R;
-import com.sovaowlsova.auroratuner.core.data.BuiltInInstrumentId;
+import com.sovaowlsova.auroratuner.core.data.BuiltInInstrumentInfo;
 import com.sovaowlsova.auroratuner.core.data.InstrumentRegistry;
 import com.sovaowlsova.auroratuner.core.di.AppContainer;
 import com.sovaowlsova.auroratuner.core.model.Instrument;
 import com.sovaowlsova.auroratuner.core.model.Tuning;
+import com.sovaowlsova.auroratuner.core.util.FragmentFactory;
 import com.sovaowlsova.auroratuner.tuner.presentation.TunerViewModel;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TunerFragment extends Fragment {
 
+    private HashMap<String, Fragment> instrumentIdToFragment;
     private TextView noteText;
     private TextView deltaText;
     private AutoCompleteTextView instrumentSelectionDropdown;
@@ -40,11 +44,7 @@ public class TunerFragment extends Fragment {
     private ConstraintSet tunerSectionConstraintSet;
     private final int INSTRUMENT_VIEW_ID = R.id.instrument_view;
     private List<Instrument> allInstruments;
-    private GuitarFragment guitarFragment;
-    private UkuleleFragment ukuleleFragment;
     private Fragment currentInstrumentFragment;
-
-    private final HashMap<String, Fragment> idToFragment = new HashMap<>();
     TunerViewModel viewModel;
     TunerEngine engine;
 
@@ -55,6 +55,9 @@ public class TunerFragment extends Fragment {
 
     @Override
     public void onHiddenChanged(boolean hidden) {
+        if (noteText == null) {
+            return;
+        }
         if (hidden) {
             noteText.setText(R.string.note_text_placeholder);
             noteText.setTextColor(Color.WHITE);
@@ -62,6 +65,7 @@ public class TunerFragment extends Fragment {
             deltaText.setText("");
             viewModel.stopTuner();
         } else {
+            System.out.println("Tuner shown");
             viewModel.startTuner(requireContext());
         }
     }
@@ -70,18 +74,21 @@ public class TunerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        guitarFragment = new GuitarFragment();
-        ukuleleFragment = new UkuleleFragment();
-        getChildFragmentManager()
-                .beginTransaction()
-                .add(INSTRUMENT_VIEW_ID, guitarFragment)
-                .add(INSTRUMENT_VIEW_ID, ukuleleFragment)
-                .hide(ukuleleFragment)
-                .commit();
-        currentInstrumentFragment = guitarFragment;
+        instrumentIdToFragment = new HashMap<>();
+        for (BuiltInInstrumentInfo info : BuiltInInstrumentInfo.values()) {
+            instrumentIdToFragment.put(
+                    info.getId(),
+                    FragmentFactory.create(info.getFragmentClass())
+            );
+        }
 
-        idToFragment.put(BuiltInInstrumentId.GUITAR_6.get(), guitarFragment);
-        idToFragment.put(BuiltInInstrumentId.UKULELE.get(), ukuleleFragment);
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        instrumentIdToFragment.forEach((key, value) -> {
+            transaction.add(INSTRUMENT_VIEW_ID, value);
+            transaction.hide(value);
+        });
+        transaction.commit();
+        switchInstrumentView(BuiltInInstrumentInfo.GUITAR_6.getId());
 
         engine = AppContainer.getInstance().getTunerEngine();
         TunerViewModelFactory viewModelFactory = new TunerViewModelFactory(engine);
@@ -101,11 +108,14 @@ public class TunerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setContextualVariables();
         setInstrumentSelectionSpinnerVariables();
-        setTuningSelectionSpinnerVariables(InstrumentRegistry.getInstance().getById(BuiltInInstrumentId.GUITAR_6.get()));
+        setTuningSelectionSpinnerVariables(InstrumentRegistry.getInstance().getById(BuiltInInstrumentInfo.GUITAR_6.getId()));
 
         viewModel.getUiState().observe(getViewLifecycleOwner(), this::setUiState);
         viewModel.getErrorState().observe(getViewLifecycleOwner(), this::displayError);
-        viewModel.startTuner(requireContext());
+        System.out.println("Tuner view is created");
+        if (isVisible() || !isHidden()) {
+            viewModel.startTuner(requireContext());
+        }
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -171,17 +181,21 @@ public class TunerFragment extends Fragment {
 
     private void switchInstrumentView(String instrumentId) {
         System.out.println("Switching to instrument with id " + instrumentId);
-        FragmentTransaction transaction = getChildFragmentManager()
-                .beginTransaction()
-                .hide(currentInstrumentFragment);
-        transaction.setReorderingAllowed(true);
-        if (instrumentId.equals(BuiltInInstrumentId.GUITAR_6.get())) {
-            transaction.show(guitarFragment);
-            currentInstrumentFragment = guitarFragment;
-        } else if (instrumentId.equals(BuiltInInstrumentId.UKULELE.get())) {
-            transaction.show(ukuleleFragment);
+        Fragment newFragment = instrumentIdToFragment.get(instrumentId);
+        if (newFragment == null) {
+            System.out.println("Unknown instrument with ID " + instrumentId);
+            return;
         }
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        if (currentInstrumentFragment == null) {
+            currentInstrumentFragment = newFragment;
+        } else {
+            transaction.hide(currentInstrumentFragment);
+        }
+        transaction.setReorderingAllowed(true);
+        transaction.show(newFragment);
         transaction.commit();
+        currentInstrumentFragment = newFragment;
     }
 
     private void setUiState(TunerUiState state) {
@@ -192,6 +206,9 @@ public class TunerFragment extends Fragment {
     }
 
     private void displayError(String message) {
-        // TODO: Display error
+        Context context = getContext();
+        if (context != null) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        }
     }
 }

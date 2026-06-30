@@ -13,6 +13,7 @@ public class AudioCapture {
     private final int sampleRate;
     private final int bufferSize;
     private AudioRecord audioRecord;
+    private volatile boolean recording = false;
 
     public AudioCapture(int sampleRate, int bufferSize) {
         this.sampleRate = sampleRate;
@@ -21,21 +22,27 @@ public class AudioCapture {
 
     public short[] read() {
         short[] buffer = new short[bufferSize];
-        if (audioRecord == null) {
-            System.out.println("Trying to read audio but AudioCapture is null");
+        if (audioRecord == null || !recording) {
+            System.out.println("Trying to read audio but AudioCapture is stopped");
             return new short[0];
         }
-        int res = audioRecord.read(buffer, 0, bufferSize);
-        if (res < 0) {
-            System.out.println("AudioCapture error. Code: " + String.valueOf(res));
-            return new short[0];
+        try {
+            int res = audioRecord.read(buffer, 0, bufferSize);
+            if (res < 0) {
+                System.out.println("AudioCapture error. Code: " + String.valueOf(res));
+                return new short[0];
+            }
+            return buffer;
+        } catch (Exception e) {
+           System.out.println("AudioCapture error: " + e.getMessage());
+           return new short[0];
         }
-
-        return buffer;
     }
 
     public boolean start(Context context) {
+        System.out.println("AudioCapture: starting");
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            System.out.println("Audio permission isn't granted. Can not start the tuner");
             return false;
         }
         if (audioRecord != null) {
@@ -48,11 +55,13 @@ public class AudioCapture {
                 AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT, bufferSize
         );
+        recording = true;
         audioRecord.startRecording();
         return true;
     }
 
     public void stop() {
+        recording = false;
         if (audioRecord != null) {
             audioRecord.stop();
             audioRecord.release();

@@ -30,8 +30,8 @@ public class InstrumentRegistry {
     }
 
     private void registerBuiltIn() {
-        register(new BuiltInInstrument(BuiltInInstrumentId.GUITAR_6.get(), R.string.instrument_guitar, List.of(BuiltInTunings.Guitar6Standard.get(), BuiltInTunings.Guitar6DropD.get())));
-        register(new BuiltInInstrument(BuiltInInstrumentId.UKULELE.get(), R.string.instrument_ukulele, List.of(BuiltInTunings.UkuleleStandard.get())));
+        register(new BuiltInInstrument(BuiltInInstrumentInfo.GUITAR_6.getId(), R.string.instrument_guitar, List.of(BuiltInTunings.Guitar6Standard.get(), BuiltInTunings.Guitar6DropD.get())));
+        register(new BuiltInInstrument(BuiltInInstrumentInfo.UKULELE.getId(), R.string.instrument_ukulele, List.of(BuiltInTunings.UkuleleStandard.get())));
     }
 
     public List<Instrument> getAll() {
