@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
@@ -35,18 +36,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TunerFragment extends Fragment {
-
-    private HashMap<String, Fragment> instrumentIdToFragment;
     private TextView noteText;
     private TextView deltaText;
     private AutoCompleteTextView instrumentSelectionDropdown;
     private AutoCompleteTextView tuningSelectionSpinnerDropdown;
     private ConstraintSet tunerSectionConstraintSet;
     private final int INSTRUMENT_VIEW_ID = R.id.instrument_view;
-    private List<Instrument> allInstruments;
     private Fragment currentInstrumentFragment;
-    TunerViewModel viewModel;
-    TunerEngine engine;
+    private TunerViewModel viewModel;
 
 
     public TunerFragment() {
@@ -59,6 +56,7 @@ public class TunerFragment extends Fragment {
             return;
         }
         if (hidden) {
+            // Resetting tuner to default on hide
             noteText.setText(R.string.note_text_placeholder);
             noteText.setTextColor(Color.WHITE);
             tunerSectionConstraintSet.setHorizontalBias(R.id.measure_line, 0.5f);
@@ -72,34 +70,19 @@ public class TunerFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        System.out.println("Creating tuner...");
         super.onCreate(savedInstanceState);
-
-        instrumentIdToFragment = new HashMap<>();
-        for (BuiltInInstrumentInfo info : BuiltInInstrumentInfo.values()) {
-            instrumentIdToFragment.put(
-                    info.getId(),
-                    FragmentFactory.create(info.getFragmentClass())
-            );
-        }
-
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        instrumentIdToFragment.forEach((key, value) -> {
-            transaction.add(INSTRUMENT_VIEW_ID, value);
-            transaction.hide(value);
-        });
-        transaction.commit();
-        switchInstrumentView(BuiltInInstrumentInfo.GUITAR_6.getId());
-
-        engine = AppContainer.getInstance().getTunerEngine();
-        TunerViewModelFactory viewModelFactory = new TunerViewModelFactory(engine);
+        TunerEngine engine = AppContainer.getInstance().getTunerEngine();
+        SavedStateViewModelFactory viewModelFactory = new SavedStateViewModelFactory(requireActivity().getApplication(),
+                this,
+                getArguments());
+        System.out.println("viewModel is null: " + (viewModel == null));
         viewModel = new ViewModelProvider(this, viewModelFactory).get(TunerViewModel.class);
-        allInstruments = InstrumentRegistry.getInstance().getAll();
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_tuner, container, false);
     }
 
@@ -107,15 +90,23 @@ public class TunerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setContextualVariables();
-        setInstrumentSelectionSpinnerVariables();
-        setTuningSelectionSpinnerVariables(InstrumentRegistry.getInstance().getById(BuiltInInstrumentInfo.GUITAR_6.getId()));
 
         viewModel.getUiState().observe(getViewLifecycleOwner(), this::setUiState);
         viewModel.getErrorState().observe(getViewLifecycleOwner(), this::displayError);
+        viewModel.getInstrumentSpinnerState().observe(getViewLifecycleOwner(), this::setInstrumentSpinnerItems);
+        viewModel.getTuningSpinnerState().observe(getViewLifecycleOwner(), this::setTuningSpinnerItems);
+        viewModel.getCurrentInstrumentFragmentState().observe(getViewLifecycleOwner(), this::setInstrumentFragment);
+
+        configureInstrumentSelectionDropdown();
+
         System.out.println("Tuner view is created");
         if (isVisible() || !isHidden()) {
             viewModel.startTuner(requireContext());
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -133,82 +124,68 @@ public class TunerFragment extends Fragment {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void setInstrumentSelectionSpinnerVariables() {
-        Context context = getContext();
-
-        List<String> instrumentNames = InstrumentRegistry.getInstance().getAll()
-                .stream()
-                .map(inst -> inst.getName(context))
-                .collect(Collectors.toList());
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                context,
-                R.layout.dropdown_item,
-                instrumentNames
-        );
-
-        adapter.setDropDownViewResource(R.layout.dropdown_item);
-        instrumentSelectionDropdown.setAdapter(adapter);
-
+    private void configureInstrumentSelectionDropdown() {
         instrumentSelectionDropdown.setOnItemClickListener((parent, view, position, id) -> {
-            Instrument selectedInstrument = allInstruments.get(position);
-            String instrumentId = selectedInstrument.getId();
-            switchInstrumentView(instrumentId);
-            setTuningSelectionSpinnerVariables(selectedInstrument);
+            viewModel.selectInstrument(position);
         });
     }
 
-    @SuppressWarnings("ConstantConditions")
-    private void setTuningSelectionSpinnerVariables(Instrument instrument) {
-        Context context = getContext();
-        List<Tuning> instrumentTunings = instrument.getTunings();
-        // toList() required min API level 34
-        List<String> tuningNames = instrumentTunings
-                .stream()
-                .map(Tuning::getName)
-                .collect(Collectors.toList());
-
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                context,
-                R.layout.dropdown_item,
-                tuningNames
-        );
-
-        adapter.setDropDownViewResource(R.layout.dropdown_item);
-        tuningSelectionSpinnerDropdown.setAdapter(adapter);
-    }
-
-    private void switchInstrumentView(String instrumentId) {
-        System.out.println("Switching to instrument with id " + instrumentId);
-        Fragment newFragment = instrumentIdToFragment.get(instrumentId);
-        if (newFragment == null) {
-            System.out.println("Unknown instrument with ID " + instrumentId);
-            return;
-        }
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        if (currentInstrumentFragment == null) {
-            currentInstrumentFragment = newFragment;
-        } else {
-            transaction.hide(currentInstrumentFragment);
-        }
-        transaction.setReorderingAllowed(true);
-        transaction.show(newFragment);
-        transaction.commit();
-        currentInstrumentFragment = newFragment;
-    }
-
-    private void setUiState(TunerUiState state) {
+    private void setUiState(@NonNull TunerUiState state) {
         noteText.setText(state.getNoteText());
         deltaText.setText(state.getDeltaText());
         noteText.setTextColor(state.getNoteColor());
         tunerSectionConstraintSet.setHorizontalBias(R.id.measure_line, state.getLineBias());
     }
 
-    private void displayError(String message) {
+    private void displayError(@NonNull String message) {
         Context context = getContext();
         if (context != null) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setInstrumentSpinnerItems(@NonNull List<String> instrumentIds) {
+        Context context = requireContext();
+        List<String> instrumentNames = instrumentIds.stream()
+                .map(id -> InstrumentRegistry.getInstance().getById(id).getName(context))
+                .collect(Collectors.toList());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                context,
+                R.layout.dropdown_item,
+                instrumentNames
+        );
+        adapter.setDropDownViewResource(R.layout.dropdown_item);
+        instrumentSelectionDropdown.setAdapter(adapter);
+    }
+
+    private void setTuningSpinnerItems(@NonNull List<String> tuningNames) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(),
+                R.layout.dropdown_item,
+                tuningNames
+        );
+        adapter.setDropDownViewResource(R.layout.dropdown_item);
+        tuningSelectionSpinnerDropdown.setAdapter(adapter);
+    }
+
+    private void setInstrumentFragment(@NonNull Fragment fragment) {
+        if (fragment == currentInstrumentFragment) {
+            return;
+        }
+        if (!fragment.isAdded()) {
+            getChildFragmentManager().beginTransaction()
+                    .add(INSTRUMENT_VIEW_ID, fragment, fragment.getClass().getSimpleName())
+                    .commit();
+        }
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        if (currentInstrumentFragment == null) {
+            currentInstrumentFragment = fragment;
+        } else {
+            transaction.hide(currentInstrumentFragment);
+        }
+        transaction.setReorderingAllowed(true);
+        transaction.show(fragment);
+        transaction.commit();
+        currentInstrumentFragment = fragment;
     }
 }

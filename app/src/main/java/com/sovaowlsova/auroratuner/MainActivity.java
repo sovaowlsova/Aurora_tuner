@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         System.out.println("Stopped");
+        // finish();
         AppContainer.getInstance().getTunerEngine().stopTuner();
     }
 

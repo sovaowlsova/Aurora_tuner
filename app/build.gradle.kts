@@ -33,6 +33,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.11.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.20.0")
     implementation("org.apache.commons:commons-math3:3.6.1")
     implementation("androidx.appcompat:appcompat:1.7.1")

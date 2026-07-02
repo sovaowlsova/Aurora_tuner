@@ -2,6 +2,7 @@ package com.sovaowlsova.auroratuner.core.model;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
@@ -12,12 +13,12 @@ public abstract class Instrument {
     private final List<Tuning> tunings;
 
 
-    public Instrument(String id) {
+    public Instrument(@NonNull String id) {
         this.id = id;
         tunings = new ArrayList<>();
     }
 
-    public Instrument(String id, List<Tuning> tunings) {
+    public Instrument(@NonNull String id, List<Tuning> tunings) {
         this.id = id;
         this.tunings = List.copyOf(tunings);
     }
