@@ -22,16 +22,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sovaowlsova.auroratuner.R;
-import com.sovaowlsova.auroratuner.core.data.BuiltInInstrumentInfo;
 import com.sovaowlsova.auroratuner.core.data.InstrumentRegistry;
 import com.sovaowlsova.auroratuner.core.di.AppContainer;
+import com.sovaowlsova.auroratuner.core.model.BuiltInInstrument;
 import com.sovaowlsova.auroratuner.core.model.Instrument;
-import com.sovaowlsova.auroratuner.core.model.Tuning;
 import com.sovaowlsova.auroratuner.core.util.FragmentFactory;
 import com.sovaowlsova.auroratuner.tuner.presentation.TunerViewModel;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +39,7 @@ public class TunerFragment extends Fragment {
     private AutoCompleteTextView tuningSelectionSpinnerDropdown;
     private ConstraintSet tunerSectionConstraintSet;
     private final int INSTRUMENT_VIEW_ID = R.id.instrument_view;
+    private Instrument currentInstrument;
     private Fragment currentInstrumentFragment;
     private TunerViewModel viewModel;
 
@@ -168,24 +166,46 @@ public class TunerFragment extends Fragment {
         tuningSelectionSpinnerDropdown.setAdapter(adapter);
     }
 
-    private void setInstrumentFragment(@NonNull Fragment fragment) {
-        if (fragment == currentInstrumentFragment) {
+    private void setInstrumentFragment(@NonNull Instrument instrument) {
+        System.out.println("Switch to instrument with id: " + instrument.getId());
+        if (instrument.equals(currentInstrument)) {
+            System.out.println("Already chose that instrument");
             return;
         }
-        if (!fragment.isAdded()) {
+        String instrumentTag = "instrument_" + instrument.getId();
+        Fragment instrumentFragment = getChildFragmentManager().findFragmentByTag(instrumentTag);
+        if (instrumentFragment == null) {
+            if (instrument instanceof BuiltInInstrument builtInInstrument) {
+                instrumentFragment = FragmentFactory.create(builtInInstrument.getInstrumentFragmentClass());
+                System.out.println("Instrument is built in");
+            } else {
+                // TODO: implement JSON instruments fragments
+            }
+        }
+        if (instrumentFragment == null) {
+            System.out.println("Could not find or create fragment for instrument id: " + instrument.getId());
+            return;
+        }
+        if (!instrumentFragment.isAdded()) {
+            System.out.println("Instrument is not added, adding new instrument fragment with tag: " + instrumentTag);
             getChildFragmentManager().beginTransaction()
-                    .add(INSTRUMENT_VIEW_ID, fragment, fragment.getClass().getSimpleName())
+                    .add(INSTRUMENT_VIEW_ID, instrumentFragment, instrumentTag)
                     .commit();
         }
+
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         if (currentInstrumentFragment == null) {
-            currentInstrumentFragment = fragment;
+            System.out.println("No current instrument. New current instrument id: " + instrument.getId());
+            currentInstrumentFragment = instrumentFragment;
         } else {
+            System.out.println("Hiding current instrument id: " + instrument.getId());
             transaction.hide(currentInstrumentFragment);
         }
         transaction.setReorderingAllowed(true);
-        transaction.show(fragment);
+        transaction.show(instrumentFragment);
         transaction.commit();
-        currentInstrumentFragment = fragment;
+        currentInstrumentFragment = instrumentFragment;
+        currentInstrument = instrument;
+        System.out.println("End of instrument switch");
     }
 }

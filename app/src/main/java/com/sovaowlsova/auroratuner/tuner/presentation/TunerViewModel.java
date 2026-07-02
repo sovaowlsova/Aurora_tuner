@@ -3,20 +3,17 @@ package com.sovaowlsova.auroratuner.tuner.presentation;
 import android.content.Context;
 import android.graphics.Color;
 
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
 import com.sovaowlsova.auroratuner.R;
-import com.sovaowlsova.auroratuner.core.data.BuiltInInstrumentInfo;
 import com.sovaowlsova.auroratuner.core.data.InstrumentRegistry;
 import com.sovaowlsova.auroratuner.core.data.Note;
 import com.sovaowlsova.auroratuner.core.di.AppContainer;
 import com.sovaowlsova.auroratuner.core.model.Instrument;
 import com.sovaowlsova.auroratuner.core.model.Tuning;
-import com.sovaowlsova.auroratuner.core.util.FragmentFactory;
 import com.sovaowlsova.auroratuner.tuner.ui.TunerEngine;
 import com.sovaowlsova.auroratuner.tuner.ui.TunerUiState;
 
@@ -38,12 +35,11 @@ public class TunerViewModel extends ViewModel {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final float BIAS_INTERVAL = MAX_LINE_BIAS - 0.5f;
-    private final HashMap<String, Fragment> instrumentIdToFragment;
     private  MutableLiveData<TunerUiState> uiState;
     private  MutableLiveData<String> errorState;
     private MutableLiveData<List<String>> instrumentSpinnerState;
     private MutableLiveData<List<String>> tuningSpinnerState;
-    private MutableLiveData<Fragment> currentInstrumentFragmentState;
+    private MutableLiveData<Instrument> currentInstrumentFragmentState;
     private final TunerEngine engine;
     private final List<Instrument> allInstruments;
     private final SavedStateHandle savedStateHandle;
@@ -54,13 +50,6 @@ public class TunerViewModel extends ViewModel {
         this.savedStateHandle = savedStateHandle;
         allInstruments = InstrumentRegistry.getInstance().getAll();
 
-        instrumentIdToFragment = new HashMap<>();
-        for (BuiltInInstrumentInfo info : BuiltInInstrumentInfo.values()) {
-            instrumentIdToFragment.put(
-                    info.getId(),
-                    FragmentFactory.create(info.getFragmentClass())
-            );
-        }
         getInstrumentSpinnerState();
         setInstrumentSpinnerState();
 
@@ -102,15 +91,9 @@ public class TunerViewModel extends ViewModel {
         Instrument selectedInstrument = allInstruments.get(position);
         if (selectedInstrument == null) {
             System.out.println("Unknown instrument with position: " + position);
+            return;
         }
-        // Id can not be null
-        @SuppressWarnings("ConstantConditions")
-        String instrumentId = selectedInstrument.getId();
-        Fragment newFragment = instrumentIdToFragment.get(instrumentId);
-        if (newFragment == null) {
-            System.out.println("instrumentId " + instrumentId + " does not correlate to any fragment");
-        }
-        currentInstrumentFragmentState.postValue(instrumentIdToFragment.get(instrumentId));
+        currentInstrumentFragmentState.postValue(selectedInstrument);
         savedStateHandle.set(KEY_CURRENT_INSTRUMENT_POSITON, position);
         setTuningSpinnerState(selectedInstrument);
     }
@@ -143,7 +126,7 @@ public class TunerViewModel extends ViewModel {
         return tuningSpinnerState;
     }
 
-    public LiveData<Fragment> getCurrentInstrumentFragmentState() {
+    public LiveData<Instrument> getCurrentInstrumentFragmentState() {
         if (currentInstrumentFragmentState == null) {
             currentInstrumentFragmentState = new MutableLiveData<>();
         }

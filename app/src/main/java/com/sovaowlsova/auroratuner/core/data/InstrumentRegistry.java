@@ -5,6 +5,8 @@ import com.sovaowlsova.auroratuner.core.model.BuiltInInstrument;
 import com.sovaowlsova.auroratuner.core.model.BuiltInTunings;
 import com.sovaowlsova.auroratuner.core.model.Instrument;
 import com.sovaowlsova.auroratuner.core.model.Tuning;
+import com.sovaowlsova.auroratuner.tuner.ui.GuitarFragment;
+import com.sovaowlsova.auroratuner.tuner.ui.UkuleleFragment;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,8 +32,22 @@ public class InstrumentRegistry {
     }
 
     private void registerBuiltIn() {
-        register(new BuiltInInstrument(BuiltInInstrumentInfo.GUITAR_6.getId(), R.string.instrument_guitar, List.of(BuiltInTunings.Guitar6Standard.get(), BuiltInTunings.Guitar6DropD.get())));
-        register(new BuiltInInstrument(BuiltInInstrumentInfo.UKULELE.getId(), R.string.instrument_ukulele, List.of(BuiltInTunings.UkuleleStandard.get())));
+        register(new BuiltInInstrument(
+                "Guitar6",
+                R.string.instrument_guitar,
+                List.of(BuiltInTunings.Guitar6Standard.get(),
+                        BuiltInTunings.Guitar6DropD.get()
+                ),
+                GuitarFragment.class
+                )
+        );
+        register(new BuiltInInstrument(
+                "Ukulele",
+                R.string.instrument_ukulele,
+                List.of(BuiltInTunings.UkuleleStandard.get()),
+                UkuleleFragment.class
+                )
+        );
     }
 
     public List<Instrument> getAll() {
