@@ -30,7 +30,7 @@ import java.util.List;
 public class GuitarFragment extends InstrumentFragment {
     private static final String ARG_TUNING = "tuning";
     private final HashMap<Note, List<Pair<ImageView, TextView>>> noteToUi = new HashMap<>();
-    private final HashSet<Note> hitNotes = new HashSet<>();
+    private final HashSet<Note> tunedStrings = new HashSet<>();
     private final HashSet<TextView> highlightedNoteTextViews = new HashSet<>();
     private MutableLiveData<TuningDirection> tuningDirectionData;
     private Tuning tuning;
@@ -103,44 +103,44 @@ public class GuitarFragment extends InstrumentFragment {
     }
 
     @Override
-    public void setNote(Note note, boolean isHit) {
+    public void setNote(Note note, boolean isTuned) {
         Note closestString = tuning.getClosestString(note.getFrequency());
 
         updateTuningDirection(closestString, note);
 
-        if (hitNotes.contains(closestString)) {
-            System.out.println("String is already hit");
+        if (tunedStrings.contains(closestString)) {
+            System.out.println("String is already tuned");
             return;
         }
 
-        List<Pair<ImageView, TextView>> hitStrings = noteToUi.get(closestString);
-        if (hitStrings == null || hitStrings.isEmpty()) {
-            System.out.println("Couldn't find hit strings");
+        List<Pair<ImageView, TextView>> affectedStrings = noteToUi.get(closestString);
+        if (affectedStrings == null || affectedStrings.isEmpty()) {
+            System.out.println("Couldn't find affected strings");
             return;
         }
 
-        if (isHit && note.equals(closestString)) {
-            hitNotes.add(closestString);
+        if (isTuned && note.equals(closestString)) {
+            tunedStrings.add(closestString);
         }
 
-        for (Pair<ImageView, TextView> uiPair : hitStrings) {
-            int newTextColor = hitNotes.contains(closestString) ? Color.GREEN : Color.YELLOW;
+        for (Pair<ImageView, TextView> uiPair : affectedStrings) {
+            int newTextColor = tunedStrings.contains(closestString) ? Color.GREEN : Color.YELLOW;
             uiPair.second.setTextColor(newTextColor);
-            if (hitNotes.contains(closestString)) {
+            if (tunedStrings.contains(closestString)) {
                 highlightedNoteTextViews.add(uiPair.second);
             }
         }
 
         if (!currentNoteUi.isEmpty()) {
             for (Pair<ImageView, TextView> uiPair : currentNoteUi) {
-                if (!highlightedNoteTextViews.contains(uiPair.second) && !hitStrings.contains(uiPair)) {
+                if (!highlightedNoteTextViews.contains(uiPair.second) && !affectedStrings.contains(uiPair)) {
                     uiPair.second.setTextColor(Color.WHITE);
                 }
             }
         }
 
         currentNoteUi.clear();
-        currentNoteUi.addAll(hitStrings);
+        currentNoteUi.addAll(affectedStrings);
     }
 
     @Override
@@ -172,7 +172,7 @@ public class GuitarFragment extends InstrumentFragment {
 
     private void resetUi() {
         currentNoteUi.clear();
-        hitNotes.clear();
+        tunedStrings.clear();
         highlightedNoteTextViews.clear();
         for (TextView textView : stringTextViews) {
             textView.setTextColor(Color.WHITE);
