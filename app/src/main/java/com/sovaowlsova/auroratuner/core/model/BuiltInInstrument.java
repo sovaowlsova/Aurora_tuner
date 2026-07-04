@@ -8,15 +8,15 @@ import java.util.List;
 
 public class BuiltInInstrument extends Instrument {
     private final int nameResId;
-    private final Class<? extends Fragment> instrumentFragmentClass;
+    private final Class<? extends InstrumentFragment> instrumentFragmentClass;
 
-    public BuiltInInstrument(String id, int nameResId, List<Tuning> tunings, Class<? extends Fragment> instrumentFragmentClass) {
+    public BuiltInInstrument(String id, int nameResId, List<Tuning> tunings, Class<? extends InstrumentFragment> instrumentFragmentClass) {
         super(id, tunings);
         this.nameResId = nameResId;
         this.instrumentFragmentClass = instrumentFragmentClass;
     }
 
-    public Class<? extends Fragment> getInstrumentFragmentClass() {
+    public Class<? extends InstrumentFragment> getInstrumentFragmentClass() {
         return instrumentFragmentClass;
     }
 

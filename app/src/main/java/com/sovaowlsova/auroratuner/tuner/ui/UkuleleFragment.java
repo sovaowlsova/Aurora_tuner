@@ -55,9 +55,4 @@ public class UkuleleFragment extends InstrumentFragment {
     public void setTuning(Tuning tuning) {
 
     }
-
-    @Override
-    protected void highlightString(int index, boolean isHit) {
-
-    }
 }

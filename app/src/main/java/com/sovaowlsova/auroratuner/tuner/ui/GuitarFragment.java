@@ -1,26 +1,39 @@
 package com.sovaowlsova.auroratuner.tuner.ui;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 
 import com.sovaowlsova.auroratuner.R;
 import com.sovaowlsova.auroratuner.core.data.Note;
 import com.sovaowlsova.auroratuner.core.model.InstrumentFragment;
 import com.sovaowlsova.auroratuner.core.model.Tuning;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class GuitarFragment extends InstrumentFragment {
     private static final String ARG_TUNING = "tuning";
-    private HashMap<Note, ImageView> noteToImageView = new HashMap<>();
+    private final HashMap<Note, List<Pair<ImageView, TextView>>> noteToUi = new HashMap<>();
+    private final HashSet<Note> hitNotes = new HashSet<>();
+    private final HashSet<TextView> highlightedNotes = new HashSet<>();
     private Tuning tuning;
+    private Tuning firstTuning;
 
-    private int[] stringIds = {
+    private final int[] stringIds = {
             R.id.string1,
             R.id.string2,
             R.id.string3,
@@ -29,16 +42,22 @@ public class GuitarFragment extends InstrumentFragment {
             R.id.string6
     };
 
+    private final ImageView[] stringCircles = new ImageView[stringIds.length];
+
+    private final int[] noteTextIds = {
+            R.id.note_text1,
+            R.id.note_text2,
+            R.id.note_text3,
+            R.id.note_text4,
+            R.id.note_text5,
+            R.id.note_text6
+    };
+
+    private final TextView[] stringTextViews = new TextView[noteTextIds.length];
+    HashSet<Pair<ImageView, TextView>> currentNoteUi = new HashSet<>();
+
     public GuitarFragment() {
         // Required empty public constructor
-    }
-
-    public static GuitarFragment newInstance(Tuning tuning) {
-        GuitarFragment fragment = new GuitarFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_TUNING, tuning);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -46,19 +65,6 @@ public class GuitarFragment extends InstrumentFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             tuning = (Tuning) getArguments().getSerializable(ARG_TUNING);
-            if (tuning == null) {
-                return;
-            }
-
-            List<Note> notes = tuning.getNotes();
-            if (notes.size() != stringIds.length) {
-                System.out.println("Wrong amount of strings in a tuning: " + tuning.getName());
-                return;
-            }
-            for (int i = 0; i < notes.size(); i++) {
-                Note note = notes.get(i);
-                noteToImageView.put(note, requireView().findViewById(stringIds[i]));
-            }
         }
     }
 
@@ -70,17 +76,100 @@ public class GuitarFragment extends InstrumentFragment {
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        View currentView = requireView();
+        for (int i = 0; i < stringIds.length; i++) {
+            stringCircles[i] = currentView.findViewById(stringIds[i]);
+            stringTextViews[i] = currentView.findViewById(noteTextIds[i]);
+        }
+
+        if (firstTuning == null) {
+            return;
+        }
+
+        setTuning(firstTuning);
+        mapNotesToUi(firstTuning.getNotes());
+    }
+
+    @Override
     public void setNote(Note note, boolean isHit) {
         Note closestString = tuning.getClosestString(note.getFrequency());
+        if (hitNotes.contains(closestString)) {
+            System.out.println("String is already hit");
+            return;
+        }
+
+        List<Pair<ImageView, TextView>> hitStrings = noteToUi.get(closestString);
+        if (hitStrings == null || hitStrings.isEmpty()) {
+            System.out.println("Couldn't find hit strings");
+            return;
+        }
+
+        if (isHit && note.equals(closestString)) {
+            hitNotes.add(closestString);
+        }
+
+        for (Pair<ImageView, TextView> uiPair : hitStrings) {
+            int newTextColor = hitNotes.contains(closestString) ? Color.GREEN : Color.YELLOW;
+            uiPair.second.setTextColor(newTextColor);
+            if (hitNotes.contains(closestString)) {
+                highlightedNotes.add(uiPair.second);
+            }
+        }
+
+        if (!currentNoteUi.isEmpty()) {
+            for (Pair<ImageView, TextView> uiPair : currentNoteUi) {
+                if (!highlightedNotes.contains(uiPair.second) && !hitStrings.contains(uiPair)) {
+                    uiPair.second.setTextColor(Color.WHITE);
+                }
+            }
+        }
+
+        currentNoteUi.clear();
+        currentNoteUi.addAll(hitStrings);
     }
 
     @Override
     public void setTuning(Tuning tuning) {
-
+        try {
+            requireView();
+        } catch (IllegalStateException e) {
+            // The view is not created yet. Store the tuning so onViewCreated will handle it
+            firstTuning = tuning;
+            return;
+        }
+        List<Note> notes = tuning.getNotes();
+        if (notes.size() != stringIds.length) {
+            System.out.println("Wrong amount of strings in a tuning: " + tuning.getName());
+            Toast.makeText(requireContext(), R.string.wrong_amount_of_notes, Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+        this.tuning = tuning;
+        for (int i = 0; i < notes.size(); i++) {
+            Note note = notes.get(i);
+            TextView noteTextView = stringTextViews[i];
+            noteTextView.setText(note.getName());
+        }
+        mapNotesToUi(notes);
     }
 
-    @Override
-    protected void highlightString(int index, boolean isHit) {
-
+    private void mapNotesToUi(List<Note> notes) {
+        if (notes.size() != stringIds.length) {
+            System.out.println("Wrong amount of strings in a tuning: " + tuning.getName());
+            Toast.makeText(requireContext(), R.string.wrong_amount_of_notes, Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+        noteToUi.clear();
+        for (int i = 0; i < notes.size(); i++) {
+            Note note = notes.get(i);
+            Pair<ImageView, TextView> uiPair = new Pair<>(
+                    stringCircles[i],
+                    stringTextViews[i]
+            );
+            noteToUi.computeIfAbsent(note, k -> new ArrayList<>())
+                    .add(uiPair);
+        }
     }
 }

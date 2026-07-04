@@ -2,6 +2,7 @@ package com.sovaowlsova.auroratuner.tuner.presentation;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Pair;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -40,6 +41,7 @@ public class TunerViewModel extends ViewModel {
     private MutableLiveData<List<String>> instrumentSpinnerState;
     private MutableLiveData<List<String>> tuningSpinnerState;
     private MutableLiveData<Instrument> currentInstrumentFragmentState;
+    private MutableLiveData<Pair<Note, Boolean>> noteState;
     private final TunerEngine engine;
     private final List<Instrument> allInstruments;
     private final SavedStateHandle savedStateHandle;
@@ -68,8 +70,10 @@ public class TunerViewModel extends ViewModel {
         boolean success = engine.startTuner(context, new TunerEngine.Callback() {
             @Override
             public void onNoteDetected(Note note, double frequency) {
-                TunerUiState newUiState = mapToUiState(frequency, note);
+                boolean inTune = isInTune(frequency, note);
+                TunerUiState newUiState = mapToUiState(frequency, note, inTune);
                 uiState.postValue(newUiState);
+                noteState.postValue(new Pair<>(note, inTune));
             }
 
             @Override
@@ -126,6 +130,13 @@ public class TunerViewModel extends ViewModel {
         return tuningSpinnerState;
     }
 
+    public LiveData<Pair<Note, Boolean>> getNoteState() {
+        if (noteState == null) {
+            noteState = new MutableLiveData<>();
+        }
+        return noteState;
+    }
+
     public LiveData<Instrument> getCurrentInstrumentFragmentState() {
         if (currentInstrumentFragmentState == null) {
             currentInstrumentFragmentState = new MutableLiveData<>();
@@ -133,9 +144,7 @@ public class TunerViewModel extends ViewModel {
         return currentInstrumentFragmentState;
     }
 
-    private TunerUiState mapToUiState(double frequency, Note note) {
-        float cents = (float) note.getDelta(frequency);
-        boolean inTune = Math.abs(cents) < 0.5f;
+    private TunerUiState mapToUiState(double frequency, Note note, boolean inTune) {
         int noteColor = inTune ? Color.GREEN : Color.WHITE;
         float lineBias = calculateLineBias(frequency, note);
         String noteText = note.getName();
@@ -164,5 +173,10 @@ public class TunerViewModel extends ViewModel {
                 .map(Tuning::getName)
                 .collect(Collectors.toList());
         tuningSpinnerState.postValue(tuningNames);
+    }
+
+    private boolean isInTune(double frequency, Note note) {
+        float cents = (float) note.getDelta(frequency);
+        return Math.abs(cents) < 0.5f;
     }
 }

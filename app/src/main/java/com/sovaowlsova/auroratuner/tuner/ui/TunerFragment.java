@@ -10,9 +10,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +25,10 @@ import android.widget.Toast;
 
 import com.sovaowlsova.auroratuner.R;
 import com.sovaowlsova.auroratuner.core.data.InstrumentRegistry;
-import com.sovaowlsova.auroratuner.core.di.AppContainer;
+import com.sovaowlsova.auroratuner.core.data.Note;
 import com.sovaowlsova.auroratuner.core.model.BuiltInInstrument;
 import com.sovaowlsova.auroratuner.core.model.Instrument;
+import com.sovaowlsova.auroratuner.core.model.InstrumentFragment;
 import com.sovaowlsova.auroratuner.core.util.FragmentFactory;
 import com.sovaowlsova.auroratuner.tuner.presentation.TunerViewModel;
 
@@ -40,7 +43,7 @@ public class TunerFragment extends Fragment {
     private ConstraintSet tunerSectionConstraintSet;
     private final int INSTRUMENT_VIEW_ID = R.id.instrument_view;
     private Instrument currentInstrument;
-    private Fragment currentInstrumentFragment;
+    private InstrumentFragment currentInstrumentFragment;
     private TunerViewModel viewModel;
 
 
@@ -70,7 +73,6 @@ public class TunerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         System.out.println("Creating tuner...");
         super.onCreate(savedInstanceState);
-        TunerEngine engine = AppContainer.getInstance().getTunerEngine();
         SavedStateViewModelFactory viewModelFactory = new SavedStateViewModelFactory(requireActivity().getApplication(),
                 this,
                 getArguments());
@@ -89,11 +91,13 @@ public class TunerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setContextualVariables();
 
-        viewModel.getUiState().observe(getViewLifecycleOwner(), this::setUiState);
-        viewModel.getErrorState().observe(getViewLifecycleOwner(), this::displayError);
-        viewModel.getInstrumentSpinnerState().observe(getViewLifecycleOwner(), this::setInstrumentSpinnerItems);
-        viewModel.getTuningSpinnerState().observe(getViewLifecycleOwner(), this::setTuningSpinnerItems);
-        viewModel.getCurrentInstrumentFragmentState().observe(getViewLifecycleOwner(), this::setInstrumentFragment);
+        LifecycleOwner lifecycleOwner = getViewLifecycleOwner();
+        viewModel.getUiState().observe(lifecycleOwner, this::setUiState);
+        viewModel.getErrorState().observe(lifecycleOwner, this::displayError);
+        viewModel.getInstrumentSpinnerState().observe(lifecycleOwner, this::setInstrumentSpinnerItems);
+        viewModel.getTuningSpinnerState().observe(lifecycleOwner, this::setTuningSpinnerItems);
+        viewModel.getCurrentInstrumentFragmentState().observe(lifecycleOwner, this::setInstrumentFragment);
+        viewModel.getNoteState().observe(lifecycleOwner, this::setNote);
 
         configureInstrumentSelectionDropdown();
 
@@ -123,9 +127,8 @@ public class TunerFragment extends Fragment {
 
     @SuppressWarnings("ConstantConditions")
     private void configureInstrumentSelectionDropdown() {
-        instrumentSelectionDropdown.setOnItemClickListener((parent, view, position, id) -> {
-            viewModel.selectInstrument(position);
-        });
+        instrumentSelectionDropdown.setOnItemClickListener((parent, view, position, id)
+                -> viewModel.selectInstrument(position));
     }
 
     private void setUiState(@NonNull TunerUiState state) {
@@ -133,6 +136,12 @@ public class TunerFragment extends Fragment {
         deltaText.setText(state.getDeltaText());
         noteText.setTextColor(state.getNoteColor());
         tunerSectionConstraintSet.setHorizontalBias(R.id.measure_line, state.getLineBias());
+    }
+
+    private void setNote(@NonNull Pair<Note, Boolean> info) {
+        if (currentInstrumentFragment != null) {
+            currentInstrumentFragment.setNote(info.first, info.second);
+        }
     }
 
     private void displayError(@NonNull String message) {
@@ -172,20 +181,24 @@ public class TunerFragment extends Fragment {
             System.out.println("Already chose that instrument");
             return;
         }
+
         String instrumentTag = "instrument_" + instrument.getId();
-        Fragment instrumentFragment = getChildFragmentManager().findFragmentByTag(instrumentTag);
+        InstrumentFragment instrumentFragment = (InstrumentFragment) getChildFragmentManager().findFragmentByTag(instrumentTag);
         if (instrumentFragment == null) {
             if (instrument instanceof BuiltInInstrument builtInInstrument) {
-                instrumentFragment = FragmentFactory.create(builtInInstrument.getInstrumentFragmentClass());
+                instrumentFragment = (InstrumentFragment) FragmentFactory.create(builtInInstrument.getInstrumentFragmentClass());
+                instrumentFragment.setTuning(instrument.getTunings().get(0));
                 System.out.println("Instrument is built in");
             } else {
                 // TODO: implement JSON instruments fragments
             }
         }
+
         if (instrumentFragment == null) {
             System.out.println("Could not find or create fragment for instrument id: " + instrument.getId());
             return;
         }
+
         if (!instrumentFragment.isAdded()) {
             System.out.println("Instrument is not added, adding new instrument fragment with tag: " + instrumentTag);
             getChildFragmentManager().beginTransaction()
