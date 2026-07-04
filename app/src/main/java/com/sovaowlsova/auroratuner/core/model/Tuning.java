@@ -1,20 +1,23 @@
 package com.sovaowlsova.auroratuner.core.model;
 
+import androidx.annotation.NonNull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sovaowlsova.auroratuner.core.data.Note;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class Tuning {
+public class Tuning implements Serializable {
     private final String instrumentId;
     private final String tuningName;
-    private List<Note> tuning;
+    private final List<Note> tuning;
 
-    public Tuning(String instrumentId, String tuningName, Note[] tuning) {
+    public Tuning(String instrumentId, String tuningName, @NonNull Note[] tuning) {
         this.instrumentId = instrumentId;
         this.tuningName = tuningName;
         this.tuning = Arrays.asList(tuning.clone());
@@ -49,7 +52,7 @@ public class Tuning {
         return instrumentId;
     }
 
-    public List<Note> getTuning() {
+    public List<Note> getNotes() {
         return Collections.unmodifiableList(tuning);
     }
 
