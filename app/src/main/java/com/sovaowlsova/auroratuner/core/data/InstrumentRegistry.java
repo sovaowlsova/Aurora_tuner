@@ -36,7 +36,8 @@ public class InstrumentRegistry {
                 "Guitar6",
                 R.string.instrument_guitar,
                 List.of(BuiltInTunings.Guitar6Standard.get(),
-                        BuiltInTunings.Guitar6DropD.get()
+                        BuiltInTunings.Guitar6DropD.get(),
+                        BuiltInTunings.Guitar6OpenC.get()
                 ),
                 GuitarFragment.class
                 )

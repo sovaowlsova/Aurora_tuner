@@ -48,7 +48,6 @@ public class TunerFragment extends Fragment {
     private Instrument currentInstrument;
     private InstrumentFragment currentInstrumentFragment;
     private TunerViewModel viewModel;
-    private int currentTuningPosition = 0;
 
 
     public TunerFragment() {
@@ -136,18 +135,18 @@ public class TunerFragment extends Fragment {
 
     @SuppressWarnings("ConstantConditions")
     private void configureInstrumentSelectionDropdown() {
-        instrumentSelectionDropdown.setOnItemClickListener((parent, view, position, id)
-                -> viewModel.selectInstrument(position));
+        instrumentSelectionDropdown.setOnItemClickListener((parent, view, position, id) -> {
+            viewModel.selectInstrument(position);
+            instrumentSelectionDropdown.clearFocus();
+        });
     }
 
     private void configureTuningSelectionDropdown() {
         tunerSelectionDropdown.setOnItemClickListener((parent, view, position, id) -> {
-            if (position == currentTuningPosition) {
-                return;
-            }
+            // Not tracking current position so user can reset current tuning by clicking on in the dropdown
             currentInstrumentFragment.setTuning(currentInstrument.getTunings().get(position));
-            currentTuningPosition = position;
             noteText.setText(R.string.note_text_placeholder);
+            tunerSelectionDropdown.clearFocus();
             resetUiState();
         });
     }

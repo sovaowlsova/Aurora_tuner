@@ -7,6 +7,8 @@ public enum BuiltInTunings {
             new Note[] {Note.E4, Note.B3, Note.G3, Note.D3, Note.A2, Note.E2})),
     Guitar6DropD(new Tuning("Guitar6", "Drop D",
             new Note[] {Note.E4, Note.B3, Note.G3, Note.D3, Note.A2, Note.D2})),
+    Guitar6OpenC(new Tuning("Guitar6", "Open C",
+            new Note[] {Note.E4, Note.C4, Note.G3, Note.C3, Note.G2, Note.C2})),
     UkuleleStandard(new Tuning("Ukulele", "Standard",
             new Note[] {Note.A4, Note.E4, Note.G4, Note.C4}));
     private final Tuning tuning;
