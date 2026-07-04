@@ -9,7 +9,7 @@
     <string name="settings_text">Settings</string>
     <string name="permission_to_record">Please, allow the app to record audio</string>
     <string name="allow_button">Allow</string>
-    <string name="note_text_placeholder">Play something</string>
+    <string name="note_text_placeholder">Play</string>
     <string name="measure_description">musical note measure</string>
     <string name="measure_line_description">current deviation from note</string>
     <string name="instrument_selector_hint">instrument</string>
@@ -24,6 +24,10 @@
     <string name="audio_reading_error">Audio reading error</string>
     <string name="audio_permission_error">Please give audio permission</string>
     <string name="wrong_amount_of_notes">Wrong amount of notes in a tuning</string>
+    <string name="direction_sharp_text">&gt;</string>
+    <string name="direction_flat_text">&lt;</string>
+    <string name="sharp">♯</string>
+    <string name="flat">♭</string>
 
     <string-array name="instruments_array">
         <item>@string/instrument_guitar</item>

@@ -14,8 +14,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.sovaowlsova.auroratuner.R;
+import com.sovaowlsova.auroratuner.core.data.TuningDirection;
 import com.sovaowlsova.auroratuner.core.data.Note;
 import com.sovaowlsova.auroratuner.core.model.InstrumentFragment;
 import com.sovaowlsova.auroratuner.core.model.Tuning;
@@ -30,6 +32,7 @@ public class GuitarFragment extends InstrumentFragment {
     private final HashMap<Note, List<Pair<ImageView, TextView>>> noteToUi = new HashMap<>();
     private final HashSet<Note> hitNotes = new HashSet<>();
     private final HashSet<TextView> highlightedNotes = new HashSet<>();
+    private MutableLiveData<TuningDirection> tuningDirectionData;
     private Tuning tuning;
     private Tuning firstTuning;
 
@@ -58,6 +61,14 @@ public class GuitarFragment extends InstrumentFragment {
 
     public GuitarFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public LiveData<TuningDirection> getTuningDirectionData() {
+        if (tuningDirectionData == null) {
+            tuningDirectionData = new MutableLiveData<>();
+        }
+        return tuningDirectionData;
     }
 
     @Override
@@ -94,6 +105,9 @@ public class GuitarFragment extends InstrumentFragment {
     @Override
     public void setNote(Note note, boolean isHit) {
         Note closestString = tuning.getClosestString(note.getFrequency());
+
+        updateTuningDirection(closestString, note);
+
         if (hitNotes.contains(closestString)) {
             System.out.println("String is already hit");
             return;
@@ -170,6 +184,19 @@ public class GuitarFragment extends InstrumentFragment {
             );
             noteToUi.computeIfAbsent(note, k -> new ArrayList<>())
                     .add(uiPair);
+        }
+    }
+
+    private void updateTuningDirection(Note closestString, Note note) {
+        if (closestString.equals(note)) {
+            tuningDirectionData.postValue(TuningDirection.HIT);
+            return;
+        }
+        String signedDelta = closestString.getSignedDelta(note.getFrequency(), 2);
+        if (signedDelta.charAt(0) == '+') {
+            tuningDirectionData.postValue(TuningDirection.FLAT);
+        } else {
+            tuningDirectionData.postValue(TuningDirection.SHARP);
         }
     }
 }

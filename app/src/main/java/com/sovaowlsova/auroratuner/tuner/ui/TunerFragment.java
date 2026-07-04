@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sovaowlsova.auroratuner.R;
+import com.sovaowlsova.auroratuner.core.data.TuningDirection;
 import com.sovaowlsova.auroratuner.core.data.InstrumentRegistry;
 import com.sovaowlsova.auroratuner.core.data.Note;
 import com.sovaowlsova.auroratuner.core.model.BuiltInInstrument;
@@ -38,6 +39,8 @@ import java.util.stream.Collectors;
 public class TunerFragment extends Fragment {
     private TextView noteText;
     private TextView deltaText;
+    private TextView directionSharpText;
+    private TextView directionFlatText;
     private AutoCompleteTextView instrumentSelectionDropdown;
     private AutoCompleteTextView tuningSelectionSpinnerDropdown;
     private ConstraintSet tunerSectionConstraintSet;
@@ -63,6 +66,8 @@ public class TunerFragment extends Fragment {
             tunerSectionConstraintSet.setHorizontalBias(R.id.measure_line, 0.5f);
             deltaText.setText("");
             viewModel.stopTuner();
+            directionSharpText.setText("");
+            directionFlatText.setText("");
         } else {
             System.out.println("Tuner shown");
             viewModel.startTuner(requireContext());
@@ -118,6 +123,8 @@ public class TunerFragment extends Fragment {
         deltaText = view.findViewById(R.id.delta_text);
         instrumentSelectionDropdown = view.findViewById(R.id.instrument_selection_dropdown);
         tuningSelectionSpinnerDropdown = view.findViewById(R.id.tuning_selection_dropdown);
+        directionSharpText = view.findViewById(R.id.direction_sharp);
+        directionFlatText = view.findViewById(R.id.direction_flat);
 
         ConstraintLayout tunerSectionConstraintLayout = view.findViewById(R.id.tuner_section_layout);
         tunerSectionConstraintSet = new ConstraintSet();
@@ -188,6 +195,7 @@ public class TunerFragment extends Fragment {
             if (instrument instanceof BuiltInInstrument builtInInstrument) {
                 instrumentFragment = (InstrumentFragment) FragmentFactory.create(builtInInstrument.getInstrumentFragmentClass());
                 instrumentFragment.setTuning(instrument.getTunings().get(0));
+                instrumentFragment.getTuningDirectionData().observe(getViewLifecycleOwner(), this::setTuningDirection);
                 System.out.println("Instrument is built in");
             } else {
                 // TODO: implement JSON instruments fragments
@@ -220,5 +228,21 @@ public class TunerFragment extends Fragment {
         currentInstrumentFragment = instrumentFragment;
         currentInstrument = instrument;
         System.out.println("End of instrument switch");
+    }
+
+    private void setTuningDirection(TuningDirection direction) {
+        if (direction == TuningDirection.SHARP) {
+            System.out.println("Sharp");
+            directionFlatText.setText("");
+            directionSharpText.setText(R.string.direction_sharp_text);
+        } else if (direction == TuningDirection.FLAT) {
+            System.out.println("Flat");
+            directionFlatText.setText(R.string.direction_flat_text);
+            directionSharpText.setText("");
+        } else {
+            System.out.println("Hit");
+            directionFlatText.setText("");
+            directionSharpText.setText("");
+        }
     }
 }
