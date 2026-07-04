@@ -42,12 +42,13 @@ public class TunerFragment extends Fragment {
     private TextView directionSharpText;
     private TextView directionFlatText;
     private AutoCompleteTextView instrumentSelectionDropdown;
-    private AutoCompleteTextView tuningSelectionSpinnerDropdown;
+    private AutoCompleteTextView tunerSelectionDropdown;
     private ConstraintSet tunerSectionConstraintSet;
     private final int INSTRUMENT_VIEW_ID = R.id.instrument_view;
     private Instrument currentInstrument;
     private InstrumentFragment currentInstrumentFragment;
     private TunerViewModel viewModel;
+    private int currentTuningPosition = 0;
 
 
     public TunerFragment() {
@@ -105,6 +106,7 @@ public class TunerFragment extends Fragment {
         viewModel.getNoteState().observe(lifecycleOwner, this::setNote);
 
         configureInstrumentSelectionDropdown();
+        configureTuningSelectionDropdown();
 
         System.out.println("Tuner view is created");
         if (isVisible() || !isHidden()) {
@@ -122,7 +124,7 @@ public class TunerFragment extends Fragment {
         noteText = view.findViewById(R.id.note_text);
         deltaText = view.findViewById(R.id.delta_text);
         instrumentSelectionDropdown = view.findViewById(R.id.instrument_selection_dropdown);
-        tuningSelectionSpinnerDropdown = view.findViewById(R.id.tuning_selection_dropdown);
+        tunerSelectionDropdown = view.findViewById(R.id.tuning_selection_dropdown);
         directionSharpText = view.findViewById(R.id.direction_sharp);
         directionFlatText = view.findViewById(R.id.direction_flat);
 
@@ -138,11 +140,32 @@ public class TunerFragment extends Fragment {
                 -> viewModel.selectInstrument(position));
     }
 
+    private void configureTuningSelectionDropdown() {
+        tunerSelectionDropdown.setOnItemClickListener((parent, view, position, id) -> {
+            if (position == currentTuningPosition) {
+                return;
+            }
+            currentInstrumentFragment.setTuning(currentInstrument.getTunings().get(position));
+            currentTuningPosition = position;
+            noteText.setText(R.string.note_text_placeholder);
+            resetUiState();
+        });
+    }
+
     private void setUiState(@NonNull TunerUiState state) {
         noteText.setText(state.getNoteText());
         deltaText.setText(state.getDeltaText());
         noteText.setTextColor(state.getNoteColor());
         tunerSectionConstraintSet.setHorizontalBias(R.id.measure_line, state.getLineBias());
+    }
+
+    private void resetUiState() {
+        noteText.setText(R.string.note_text_placeholder);
+        deltaText.setText("");
+        noteText.setTextColor(Color.WHITE);
+        tunerSectionConstraintSet.setHorizontalBias(R.id.measure_line, 0.5f);
+        directionFlatText.setText("");
+        directionSharpText.setText("");
     }
 
     private void setNote(@NonNull Pair<Note, Boolean> info) {
@@ -179,7 +202,7 @@ public class TunerFragment extends Fragment {
                 tuningNames
         );
         adapter.setDropDownViewResource(R.layout.dropdown_item);
-        tuningSelectionSpinnerDropdown.setAdapter(adapter);
+        tunerSelectionDropdown.setAdapter(adapter);
     }
 
     private void setInstrumentFragment(@NonNull Instrument instrument) {

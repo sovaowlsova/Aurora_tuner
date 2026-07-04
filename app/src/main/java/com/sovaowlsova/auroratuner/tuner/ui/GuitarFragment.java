@@ -31,7 +31,7 @@ public class GuitarFragment extends InstrumentFragment {
     private static final String ARG_TUNING = "tuning";
     private final HashMap<Note, List<Pair<ImageView, TextView>>> noteToUi = new HashMap<>();
     private final HashSet<Note> hitNotes = new HashSet<>();
-    private final HashSet<TextView> highlightedNotes = new HashSet<>();
+    private final HashSet<TextView> highlightedNoteTextViews = new HashSet<>();
     private MutableLiveData<TuningDirection> tuningDirectionData;
     private Tuning tuning;
     private Tuning firstTuning;
@@ -127,13 +127,13 @@ public class GuitarFragment extends InstrumentFragment {
             int newTextColor = hitNotes.contains(closestString) ? Color.GREEN : Color.YELLOW;
             uiPair.second.setTextColor(newTextColor);
             if (hitNotes.contains(closestString)) {
-                highlightedNotes.add(uiPair.second);
+                highlightedNoteTextViews.add(uiPair.second);
             }
         }
 
         if (!currentNoteUi.isEmpty()) {
             for (Pair<ImageView, TextView> uiPair : currentNoteUi) {
-                if (!highlightedNotes.contains(uiPair.second) && !hitStrings.contains(uiPair)) {
+                if (!highlightedNoteTextViews.contains(uiPair.second) && !hitStrings.contains(uiPair)) {
                     uiPair.second.setTextColor(Color.WHITE);
                 }
             }
@@ -165,7 +165,18 @@ public class GuitarFragment extends InstrumentFragment {
             TextView noteTextView = stringTextViews[i];
             noteTextView.setText(note.getName());
         }
+
+        resetUi();
         mapNotesToUi(notes);
+    }
+
+    private void resetUi() {
+        currentNoteUi.clear();
+        hitNotes.clear();
+        highlightedNoteTextViews.clear();
+        for (TextView textView : stringTextViews) {
+            textView.setTextColor(Color.WHITE);
+        }
     }
 
     private void mapNotesToUi(List<Note> notes) {
