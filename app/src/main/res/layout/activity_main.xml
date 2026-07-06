@@ -34,7 +34,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@color/transparent"
-        android:contentDescription="@string/settings_text"
+        android:contentDescription="@string/settings_content_description"
         android:src="@drawable/settings_icon"
         android:scaleType="fitCenter"
         app:tint="@color/white"

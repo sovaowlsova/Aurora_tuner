@@ -1,4 +1,4 @@
-package com.sovaowlsova.auroratuner.tuner.ui;
+package com.sovaowlsova.auroratuner.tuner.ui.instruments;
 
 import android.os.Bundle;
 

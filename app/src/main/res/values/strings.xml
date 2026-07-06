@@ -1,33 +1,28 @@
 <resources>
-    <string name="app_name">Aurora tuner</string>
-    <string name="nav_news">Новости</string>
-    <string name="nav_settings">Настройки</string>
-    <string name="nav_tuner">Тюнер</string>
-    <string name="nav_editor">Редактор</string>
-    <string name="tuner_text">Tuner</string>
-    <string name="news_text">News</string>
-    <string name="settings_text">Settings</string>
+    <string name="app_name" translatable="false">Aurora tuner</string>
+    <string name="nav_news">News</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_tuner">Tuner</string>
+    <string name="nav_editor">Editor</string>
     <string name="permission_to_record">Please, allow the app to record audio</string>
     <string name="allow_button">Allow</string>
     <string name="note_text_placeholder">Play</string>
-    <string name="measure_description">musical note measure</string>
-    <string name="measure_line_description">current deviation from note</string>
     <string name="instrument_selector_hint">instrument</string>
     <string name="tuning_selector_hint">tuning</string>
-    <string name="instrument_selector_label">instrument selection</string>
-    <string name="tuning_selector_label">tuning selection</string>
     <string name="instrument_guitar">Guitar</string>
     <string name="instrument_ukulele">Ukulele</string>
     <string name="standard_tuning">Standard</string>
-    <string name="editor_text">Editor</string>
     <string name="invalid_note_error">Invalid note name</string>
     <string name="audio_reading_error">Audio reading error</string>
     <string name="audio_permission_error">Please give audio permission</string>
     <string name="wrong_amount_of_notes">Wrong amount of notes in a tuning</string>
-    <string name="direction_sharp_text">&gt;</string>
-    <string name="direction_flat_text">&lt;</string>
-    <string name="sharp">♯</string>
-    <string name="flat">♭</string>
+    <string name="direction_sharp_text" translatable="false">&gt;</string>
+    <string name="direction_flat_text" translatable="false">&lt;</string>
+    <string name="sharp" translatable="false">♯</string>
+    <string name="flat" translatable="false">♭</string>
+    <string name="in_development_marker">in development</string>
+    <string name="settings_content_description">settings</string>
+
     <string-array name="instruments_array">
         <item>@string/instrument_guitar</item>
         <item>@string/instrument_ukulele</item>
@@ -42,6 +37,4 @@
         <item>@string/standard_tuning</item>
         <item>Drop D</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

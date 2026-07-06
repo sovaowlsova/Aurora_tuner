@@ -5,8 +5,8 @@ import com.sovaowlsova.auroratuner.core.model.BuiltInInstrument;
 import com.sovaowlsova.auroratuner.core.model.BuiltInTunings;
 import com.sovaowlsova.auroratuner.core.model.Instrument;
 import com.sovaowlsova.auroratuner.core.model.Tuning;
-import com.sovaowlsova.auroratuner.tuner.ui.GuitarFragment;
-import com.sovaowlsova.auroratuner.tuner.ui.UkuleleFragment;
+import com.sovaowlsova.auroratuner.tuner.ui.instruments.GuitarFragment;
+import com.sovaowlsova.auroratuner.tuner.ui.instruments.UkuleleFragment;
 
 import java.util.ArrayList;
 import java.util.HashSet;

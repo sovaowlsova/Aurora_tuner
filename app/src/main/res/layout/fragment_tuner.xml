@@ -17,7 +17,7 @@
         android:hint="@string/instrument_selector_hint"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.01"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.005">
@@ -29,7 +29,8 @@
             android:fontFamily="monospace"
             android:inputType="none"
             android:text="@string/instrument_guitar"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:ignore="LabelFor" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -52,7 +53,8 @@
             android:fontFamily="monospace"
             android:inputType="none"
             android:text="@string/standard_tuning"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:ignore="LabelFor" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -160,7 +162,7 @@
             android:id="@+id/measure"
             android:layout_width="300dp"
             android:layout_height="120dp"
-            android:contentDescription="@string/measure_description"
+            android:contentDescription="@null"
             android:src="@drawable/measure"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -171,7 +173,7 @@
             android:id="@+id/measure_line"
             android:layout_width="4dp"
             android:layout_height="120dp"
-            android:contentDescription="@string/measure_line_description"
+            android:contentDescription="@null"
             android:src="@drawable/measure_line"
             app:layout_constraintBottom_toBottomOf="@+id/measure"
             app:layout_constraintEnd_toEndOf="@+id/measure"

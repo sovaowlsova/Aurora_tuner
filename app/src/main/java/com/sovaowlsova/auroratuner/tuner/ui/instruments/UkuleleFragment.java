@@ -1,20 +1,13 @@
-package com.sovaowlsova.auroratuner.tuner.ui;
+package com.sovaowlsova.auroratuner.tuner.ui.instruments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.sovaowlsova.auroratuner.R;
-import com.sovaowlsova.auroratuner.core.data.Note;
-import com.sovaowlsova.auroratuner.core.data.TuningDirection;
 import com.sovaowlsova.auroratuner.core.model.InstrumentFragment;
-import com.sovaowlsova.auroratuner.core.model.Tuning;
 
 public class UkuleleFragment extends InstrumentFragment {
 

@@ -201,6 +201,10 @@ public class TunerFragment extends Fragment {
     }
 
     private void setTuningSpinnerItems(@NonNull List<String> tuningNames) {
+        int indexOfStandardTuning = tuningNames.indexOf("Standard");
+        if (indexOfStandardTuning >= 0) {
+            tuningNames.set(indexOfStandardTuning, requireContext().getString(R.string.standard_tuning));
+        }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 requireContext(),
                 R.layout.dropdown_item,
@@ -260,6 +264,7 @@ public class TunerFragment extends Fragment {
         currentInstrumentFragment = instrumentFragment;
         currentInstrument = instrument;
         viewModel.selectTuning(0);
+        resetUiState();
         System.out.println("End of instrument switch");
     }
 
