@@ -103,6 +103,7 @@ public class TunerFragment extends Fragment {
         viewModel.getTuningSpinnerState().observe(lifecycleOwner, this::setTuningSpinnerItems);
         viewModel.getCurrentInstrumentFragmentState().observe(lifecycleOwner, this::setInstrumentFragment);
         viewModel.getNoteState().observe(lifecycleOwner, this::setNote);
+        viewModel.getCurrentTuningState().observe(lifecycleOwner, this::setTuning);
 
         configureInstrumentSelectionDropdown();
         configureTuningSelectionDropdown();
@@ -111,10 +112,6 @@ public class TunerFragment extends Fragment {
         if (isVisible() || !isHidden()) {
             viewModel.startTuner(requireContext());
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -144,8 +141,7 @@ public class TunerFragment extends Fragment {
     private void configureTuningSelectionDropdown() {
         tunerSelectionDropdown.setOnItemClickListener((parent, view, position, id) -> {
             // Not tracking current position so user can reset current tuning by clicking on in the dropdown
-            currentInstrumentFragment.setTuning(currentInstrument.getTunings().get(position));
-            noteText.setText(R.string.note_text_placeholder);
+            viewModel.selectTuning(position);
             tunerSelectionDropdown.clearFocus();
             resetUiState();
         });
@@ -153,7 +149,6 @@ public class TunerFragment extends Fragment {
 
     private void setUiState(@NonNull TunerUiState state) {
         noteText.setText(state.getNoteText());
-        deltaText.setText(state.getDeltaText());
         noteText.setTextColor(state.getNoteColor());
         tunerSectionConstraintSet.setHorizontalBias(R.id.measure_line, state.getLineBias());
     }
@@ -167,10 +162,21 @@ public class TunerFragment extends Fragment {
         directionSharpText.setText("");
     }
 
-    private void setNote(@NonNull Pair<Note, Boolean> info) {
+    private void setDeltaText(String text) {
+        deltaText.setText(text);
+    }
+
+    private void setNote(@NonNull TunerNoteInfo info) {
         if (currentInstrumentFragment != null) {
-            currentInstrumentFragment.setNote(info.first, info.second);
+            currentInstrumentFragment.setNote(info);
         }
+    }
+
+    private void setTuning(int position) {
+        currentInstrumentFragment.setTuning(currentInstrument.getTunings().get(position));
+        noteText.setText(R.string.note_text_placeholder);
+        tunerSelectionDropdown.clearFocus();
+        resetUiState();
     }
 
     private void displayError(@NonNull String message) {
@@ -216,12 +222,16 @@ public class TunerFragment extends Fragment {
         if (instrumentFragment == null) {
             if (instrument instanceof BuiltInInstrument builtInInstrument) {
                 instrumentFragment = (InstrumentFragment) FragmentFactory.create(builtInInstrument.getInstrumentFragmentClass());
-                instrumentFragment.setTuning(instrument.getTunings().get(0));
                 instrumentFragment.getTuningDirectionData().observe(getViewLifecycleOwner(), this::setTuningDirection);
+                instrumentFragment.getDeltaTextData().observe(getViewLifecycleOwner(), this::setDeltaText);
                 System.out.println("Instrument is built in");
             } else {
                 // TODO: implement JSON instruments fragments
             }
+        } else {
+            System.out.println("Instrument fragment already exists. Connecting live data...");
+            instrumentFragment.getTuningDirectionData().observe(getViewLifecycleOwner(), this::setTuningDirection);
+            instrumentFragment.getDeltaTextData().observe(getViewLifecycleOwner(), this::setDeltaText);
         }
 
         if (instrumentFragment == null) {
@@ -249,6 +259,7 @@ public class TunerFragment extends Fragment {
         transaction.commit();
         currentInstrumentFragment = instrumentFragment;
         currentInstrument = instrument;
+        viewModel.selectTuning(0);
         System.out.println("End of instrument switch");
     }
 

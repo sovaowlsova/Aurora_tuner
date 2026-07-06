@@ -45,7 +45,11 @@ public class InstrumentRegistry {
         register(new BuiltInInstrument(
                 "Ukulele",
                 R.string.instrument_ukulele,
-                List.of(BuiltInTunings.UkuleleStandard.get()),
+                List.of(
+                        BuiltInTunings.UkuleleStandard.get(),
+                        BuiltInTunings.UkuleleLowG.get(),
+                        BuiltInTunings.UkuleleLowA.get()
+                        ),
                 UkuleleFragment.class
                 )
         );

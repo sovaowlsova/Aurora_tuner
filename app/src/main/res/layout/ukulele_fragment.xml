@@ -1,14 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".tuner.ui.UkuleleFragment">
+    android:layout_height="300dp">
 
-    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.5"
+        app:layout_constraintHeight_percent="0.95"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        android:contentDescription="@null"
+        app:srcCompat="@drawable/ukulele_headstock" />
+
+    <ImageView
+        android:id="@+id/string3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/string4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tuner_top"
+        app:layout_constraintVertical_bias="0.15"
+        app:layout_constraintVertical_chainStyle="spread"
+        android:contentDescription="@null"
+        app:srcCompat="@drawable/note_circle" />
+
+    <ImageView
+        android:id="@+id/string4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toTopOf="@+id/tuner_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/string3"
+        app:layout_constraintVertical_bias="0.45"
+        app:srcCompat="@drawable/note_circle" />
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/note_text3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="20sp"
+        android:fontFamily="monospace"
+        app:layout_constraintBottom_toBottomOf="@+id/string3"
+        app:layout_constraintEnd_toEndOf="@+id/string3"
+        app:layout_constraintStart_toStartOf="@+id/string3"
+        app:layout_constraintTop_toTopOf="@+id/string3" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/note_text4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="20sp"
+        android:fontFamily="monospace"
+        app:layout_constraintBottom_toBottomOf="@+id/string4"
+        app:layout_constraintEnd_toEndOf="@+id/string4"
+        app:layout_constraintStart_toStartOf="@+id/string4"
+        app:layout_constraintTop_toTopOf="@+id/string4" />
+
+    <ImageView
+        android:id="@+id/string1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toTopOf="@+id/tuner_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/string2"
+        app:layout_constraintVertical_bias="0.45"
+        app:srcCompat="@drawable/note_circle" />
+
+    <ImageView
+        android:id="@+id/string2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toTopOf="@+id/string1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tuner_top"
+        app:layout_constraintVertical_bias="0.75"
+        app:layout_constraintVertical_chainStyle="spread"
+        app:srcCompat="@drawable/note_circle" />
+
+    <TextView
+        android:id="@+id/note_text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:fontFamily="monospace"
+        app:layout_constraintBottom_toBottomOf="@+id/string1"
+        app:layout_constraintEnd_toEndOf="@+id/string1"
+        app:layout_constraintStart_toStartOf="@+id/string1"
+        app:layout_constraintTop_toTopOf="@+id/string1" />
+
+    <TextView
+        android:id="@+id/note_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:fontFamily="monospace"
+        app:layout_constraintBottom_toBottomOf="@+id/string2"
+        app:layout_constraintEnd_toEndOf="@+id/string2"
+        app:layout_constraintStart_toStartOf="@+id/string2"
+        app:layout_constraintTop_toTopOf="@+id/string2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/tuner_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/tuner_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.85" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

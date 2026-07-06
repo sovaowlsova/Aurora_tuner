@@ -17,29 +17,9 @@ import com.sovaowlsova.auroratuner.core.model.InstrumentFragment;
 import com.sovaowlsova.auroratuner.core.model.Tuning;
 
 public class UkuleleFragment extends InstrumentFragment {
-    private static final String ARG_TUNING = "tuning";
-
-    private Tuning tuning;
-
 
     public UkuleleFragment() {
         // Required empty public constructor
-    }
-
-    public static UkuleleFragment newInstance(Tuning tuning) {
-        UkuleleFragment fragment = new UkuleleFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_TUNING, tuning);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            tuning = (Tuning) getArguments().getSerializable(ARG_TUNING);
-        }
     }
 
     @Override
@@ -50,17 +30,22 @@ public class UkuleleFragment extends InstrumentFragment {
     }
 
     @Override
-    public LiveData<TuningDirection> getTuningDirectionData() {
-        return null;
+    protected int[] getStringCircleIds() {
+        return new int[] {
+                R.id.string1,
+                R.id.string2,
+                R.id.string3,
+                R.id.string4,
+        };
     }
 
     @Override
-    public void setNote(Note note, boolean isHit) {
-        Note closestString = tuning.getClosestString(note.getFrequency());
-    }
-
-    @Override
-    public void setTuning(Tuning tuning) {
-
+    protected int[] getStringTextViewIds() {
+        return new int[] {
+                R.id.note_text1,
+                R.id.note_text2,
+                R.id.note_text3,
+                R.id.note_text4,
+        };
     }
 }

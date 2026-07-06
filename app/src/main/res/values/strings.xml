@@ -28,7 +28,6 @@
     <string name="direction_flat_text">&lt;</string>
     <string name="sharp">♯</string>
     <string name="flat">♭</string>
-
     <string-array name="instruments_array">
         <item>@string/instrument_guitar</item>
         <item>@string/instrument_ukulele</item>

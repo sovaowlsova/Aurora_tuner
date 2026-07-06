@@ -16,6 +16,7 @@ import com.sovaowlsova.auroratuner.core.di.AppContainer;
 import com.sovaowlsova.auroratuner.core.model.Instrument;
 import com.sovaowlsova.auroratuner.core.model.Tuning;
 import com.sovaowlsova.auroratuner.tuner.ui.TunerEngine;
+import com.sovaowlsova.auroratuner.tuner.ui.TunerNoteInfo;
 import com.sovaowlsova.auroratuner.tuner.ui.TunerUiState;
 
 import java.util.HashMap;
@@ -41,11 +42,13 @@ public class TunerViewModel extends ViewModel {
     private MutableLiveData<List<String>> instrumentSpinnerState;
     private MutableLiveData<List<String>> tuningSpinnerState;
     private MutableLiveData<Instrument> currentInstrumentFragmentState;
-    private MutableLiveData<Pair<Note, Boolean>> noteState;
+    private MutableLiveData<Integer> currentTuningState;
+    private MutableLiveData<TunerNoteInfo> noteState;
     private final TunerEngine engine;
     private final List<Instrument> allInstruments;
     private final SavedStateHandle savedStateHandle;
     String KEY_CURRENT_INSTRUMENT_POSITON = "current_instrument";
+    String KEY_CURRENT_TUNING_POSITION = "current_tuning";
 
     public TunerViewModel(SavedStateHandle savedStateHandle) {
         engine = AppContainer.getInstance().getTunerEngine();
@@ -57,13 +60,19 @@ public class TunerViewModel extends ViewModel {
 
         getTuningSpinnerState();
         getCurrentInstrumentFragmentState();
+        getCurrentTuningState();
 
-        Integer selectedPosition = Objects.requireNonNullElse(
+        Integer selectedInstrumentPosition = Objects.requireNonNullElse(
                 savedStateHandle.get(KEY_CURRENT_INSTRUMENT_POSITON),
                 0
         );
-        System.out.println("Selected instrument position: " + selectedPosition);
-        selectInstrument(selectedPosition);
+        Integer selectedTuningPosition = Objects.requireNonNullElse(
+                savedStateHandle.get(KEY_CURRENT_TUNING_POSITION),
+                0
+        );
+        System.out.println("Selected instrument position: " + selectedInstrumentPosition);
+        selectInstrument(selectedInstrumentPosition);
+        selectTuning(selectedTuningPosition);
     }
 
     public void startTuner(Context context) {
@@ -73,7 +82,12 @@ public class TunerViewModel extends ViewModel {
                 boolean inTune = isInTune(frequency, note);
                 TunerUiState newUiState = mapToUiState(frequency, note, inTune);
                 uiState.postValue(newUiState);
-                noteState.postValue(new Pair<>(note, inTune));
+                TunerNoteInfo noteInfo = new TunerNoteInfo(
+                        note,
+                        inTune,
+                        frequency
+                );
+                noteState.postValue(noteInfo);
             }
 
             @Override
@@ -100,6 +114,11 @@ public class TunerViewModel extends ViewModel {
         currentInstrumentFragmentState.postValue(selectedInstrument);
         savedStateHandle.set(KEY_CURRENT_INSTRUMENT_POSITON, position);
         setTuningSpinnerState(selectedInstrument);
+    }
+
+    public void selectTuning(int position) {
+        savedStateHandle.set(KEY_CURRENT_TUNING_POSITION, position);
+        currentTuningState.postValue(position);
     }
 
     public LiveData<TunerUiState> getUiState() {
@@ -130,7 +149,7 @@ public class TunerViewModel extends ViewModel {
         return tuningSpinnerState;
     }
 
-    public LiveData<Pair<Note, Boolean>> getNoteState() {
+    public LiveData<TunerNoteInfo> getNoteState() {
         if (noteState == null) {
             noteState = new MutableLiveData<>();
         }
@@ -144,13 +163,19 @@ public class TunerViewModel extends ViewModel {
         return currentInstrumentFragmentState;
     }
 
+    public LiveData<Integer> getCurrentTuningState() {
+        if (currentTuningState == null) {
+            currentTuningState = new MutableLiveData<>();
+        }
+        return currentTuningState;
+    }
+
     private TunerUiState mapToUiState(double frequency, Note note, boolean inTune) {
         int noteColor = inTune ? Color.GREEN : Color.WHITE;
         float lineBias = calculateLineBias(frequency, note);
         String noteText = note.getName();
-        String deltaText = note.getSignedDelta(frequency, 2);
 
-        return new TunerUiState(noteText, deltaText, noteColor, lineBias);
+        return new TunerUiState(noteText, noteColor, lineBias);
     }
 
     private float calculateLineBias(double frequency, Note note) {

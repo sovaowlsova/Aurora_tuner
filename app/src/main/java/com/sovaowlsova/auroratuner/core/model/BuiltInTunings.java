@@ -10,7 +10,11 @@ public enum BuiltInTunings {
     Guitar6OpenC(new Tuning("Guitar6", "Open C",
             new Note[] {Note.E4, Note.C4, Note.G3, Note.C3, Note.G2, Note.C2})),
     UkuleleStandard(new Tuning("Ukulele", "Standard",
-            new Note[] {Note.A4, Note.E4, Note.G4, Note.C4}));
+            new Note[] {Note.A4, Note.E4, Note.G4, Note.C4})),
+    UkuleleLowG(new Tuning("Ukulele", "Low G",
+            new Note[] {Note.G3, Note.C4, Note.E4, Note.A4})),
+    UkuleleLowA(new Tuning("Ukulele", "Low A",
+            new Note[] {Note.A3, Note.D4, Note.F4sharp, Note.B4}));
     private final Tuning tuning;
 
     BuiltInTunings(Tuning tuning) {
