@@ -78,7 +78,8 @@ public class TunerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         System.out.println("Creating tuner...");
         super.onCreate(savedInstanceState);
-        SavedStateViewModelFactory viewModelFactory = new SavedStateViewModelFactory(requireActivity().getApplication(),
+        SavedStateViewModelFactory viewModelFactory = new SavedStateViewModelFactory(
+                requireActivity().getApplication(),
                 this,
                 getArguments());
         System.out.println("viewModel is null: " + (viewModel == null));
