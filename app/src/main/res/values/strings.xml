@@ -23,6 +23,8 @@
     <string name="in_development_marker">in development</string>
     <string name="settings_content_description">settings</string>
     <string name="news_url_error">news url is malformed</string>
+    <string name="error">Error</string>
+    <string name="error_no_internet_connection">no internet connection</string>
 
     <string-array name="instruments_array">
         <item>@string/instrument_guitar</item>

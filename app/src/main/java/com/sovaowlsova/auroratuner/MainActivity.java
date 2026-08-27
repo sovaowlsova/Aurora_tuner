@@ -46,27 +46,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Creating fragments for further use
-        tunerFragment = new TunerFragment();
-        newsFragment = new NewsFragment();
-        editorFragment = new EditorFragment();
-        permissionFragment = new PermissionFragment();
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                        .add(MAIN_VIEW_ID, newsFragment, "news")
-                        .add(MAIN_VIEW_ID, editorFragment, "editor")
-                        .hide(newsFragment)
-                        .hide(editorFragment);
-
-        int checkVal = getBaseContext().checkSelfPermission(audioPermission);
-        if (checkVal != PackageManager.PERMISSION_GRANTED) {
-            transaction.add(MAIN_VIEW_ID, permissionFragment, "permission");
-        } else {
-            System.out.println("Adding tuner...");
-            transaction.add(MAIN_VIEW_ID, tunerFragment, "tuner");
-        }
-        transaction.commitNow();
-
         configureNavMenu();
         bottomNav.setSelectedItemId(R.id.tunerFragment);
     }

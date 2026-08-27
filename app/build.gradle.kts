@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.sovaowlsova.auroratuner"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -42,6 +42,8 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.navigation:navigation-fragment:2.9.8")
     implementation("androidx.navigation:navigation-ui:2.9.8")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")

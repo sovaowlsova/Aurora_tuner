@@ -271,15 +271,12 @@ public class TunerFragment extends Fragment {
 
     private void setTuningDirection(TuningDirection direction) {
         if (direction == TuningDirection.SHARP) {
-            System.out.println("Sharp");
             directionFlatText.setText("");
             directionSharpText.setText(R.string.direction_sharp_text);
         } else if (direction == TuningDirection.FLAT) {
-            System.out.println("Flat");
             directionFlatText.setText(R.string.direction_flat_text);
             directionSharpText.setText("");
         } else {
-            System.out.println("Hit");
             directionFlatText.setText("");
             directionSharpText.setText("");
         }
