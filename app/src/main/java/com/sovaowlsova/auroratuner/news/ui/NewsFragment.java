@@ -11,6 +11,7 @@ import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +20,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.sovaowlsova.auroratuner.R;
+import com.sovaowlsova.auroratuner.core.model.Exceptions.HTTPException;
 import com.sovaowlsova.auroratuner.core.model.Exceptions.NoInternetException;
+import com.sovaowlsova.auroratuner.core.util.Constants;
 import com.sovaowlsova.auroratuner.news.data.NewsEntry;
 import com.sovaowlsova.auroratuner.news.presentation.NewsViewModel;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.List;
 
 public class NewsFragment extends Fragment {
@@ -32,7 +36,9 @@ public class NewsFragment extends Fragment {
     private ProgressBar newsProgressBar;
     private TextView errorMainTextView;
     private TextView errorSecondaryTextView;
+    private SwipeRefreshLayout newsSwipeRefresh;
     private NewsRVAdapter newsRVAdapter;
+    List<NewsEntry> currentNewsEntries;
 
     public NewsFragment() {
         // Required empty public constructor
@@ -54,6 +60,9 @@ public class NewsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setContextualVariables();
+        newsSwipeRefresh.setOnRefreshListener(() -> {
+            viewModel.fetchNewsAsync(this::handleFetchException, getContext());
+        });
 
         showLoading();
         LifecycleOwner lifecycleOwner = getViewLifecycleOwner();
@@ -70,16 +79,33 @@ public class NewsFragment extends Fragment {
     }
 
     private void handleFetchException(IOException e) {
-        if (e instanceof NoInternetException) {
-            errorMainTextView.setText(R.string.error);
-            errorSecondaryTextView.setText(R.string.error_no_internet_connection);
-        }
-        showErrorText();
+        requireActivity().runOnUiThread(() -> {
+            if (e instanceof NoInternetException) {
+                errorMainTextView.setText(getString(R.string.error));
+                errorSecondaryTextView.setText(getString(R.string.error_no_internet_connection));
+            } else if (e instanceof HTTPException httpException) {
+                int httpCode = httpException.getCode();
+                errorMainTextView.setText(getString(R.string.error_http, httpCode));
+                if (Constants.httpCodeToStringId.containsKey(httpCode)) {
+                    errorSecondaryTextView.setText(getString(Constants.httpCodeToStringId.getOrDefault(httpCode)));
+                } else {
+                    errorSecondaryTextView.setText("");
+                }
+            } else if (e instanceof SocketTimeoutException) {
+                errorMainTextView.setText(getString(R.string.error));
+                errorSecondaryTextView.setText(getString(R.string.error_connection_timeout));
+            }
+            if (newsSwipeRefresh.isRefreshing()) {
+                newsSwipeRefresh.setRefreshing(false);
+            }
+            showErrorText();
+        });
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private void updateNews(List<NewsEntry> newsEntries) {
         if (newsRVAdapter == null) {
+            this.currentNewsEntries = newsEntries;
             newsRVAdapter = new NewsRVAdapter(newsEntries);
             LinearLayoutManager layoutManager = new LinearLayoutManager(
                     getContext(),
@@ -88,6 +114,15 @@ public class NewsFragment extends Fragment {
                     );
             newsRecyclerView.setLayoutManager(layoutManager);
             newsRecyclerView.setAdapter(newsRVAdapter);
+        } else {
+            currentNewsEntries.clear();
+            currentNewsEntries.addAll(newsEntries);
+            if (newsSwipeRefresh.isRefreshing()) {
+                newsSwipeRefresh.setRefreshing(false);
+            }
+        }
+        if (newsSwipeRefresh.isRefreshing()) {
+            newsSwipeRefresh.setRefreshing(false);
         }
         newsRVAdapter.notifyDataSetChanged();
         showNews();
@@ -96,10 +131,11 @@ public class NewsFragment extends Fragment {
     @SuppressWarnings("ConstantConditions")
     private void setContextualVariables() {
         View view = getView();
-        newsRecyclerView = view.findViewById(R.id.newsRecyclerView);
-        newsProgressBar = view.findViewById(R.id.newsProgressBar);
-        errorMainTextView = view.findViewById(R.id.newsErrorMainTextView);
-        errorSecondaryTextView = view.findViewById(R.id.newsErrorSecondaryTextView);
+        newsRecyclerView = view.findViewById(R.id.news_recycler_view);
+        newsProgressBar = view.findViewById(R.id.news_progress_bar);
+        errorMainTextView = view.findViewById(R.id.news_error_main_text_view);
+        errorSecondaryTextView = view.findViewById(R.id.news_error_secondary_text_view);
+        newsSwipeRefresh = view.findViewById(R.id.news_swipe_refresh);
     }
 
     private void showErrorText() {

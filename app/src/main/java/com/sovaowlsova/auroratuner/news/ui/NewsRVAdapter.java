@@ -29,9 +29,9 @@ public class NewsRVAdapter extends RecyclerView.Adapter<NewsRVAdapter.viewholder
         public viewholder(@NonNull View itemView) {
             super(itemView);
 
-            titleTextView = itemView.findViewById(R.id.newsTitleTextView);
-            articleTextView = itemView.findViewById(R.id.newsArticleTextView);
-            dateTextView = itemView.findViewById(R.id.newsDateTextView);
+            titleTextView = itemView.findViewById(R.id.news_title_text_view);
+            articleTextView = itemView.findViewById(R.id.news_article_text_view);
+            dateTextView = itemView.findViewById(R.id.news_date_text_view);
         }
 
     }

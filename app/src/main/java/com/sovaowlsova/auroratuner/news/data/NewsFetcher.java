@@ -3,11 +3,13 @@ package com.sovaowlsova.auroratuner.news.data;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sovaowlsova.auroratuner.R;
+import com.sovaowlsova.auroratuner.core.model.Exceptions.HTTPException;
 import com.sovaowlsova.auroratuner.core.util.Constants;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
@@ -31,7 +33,7 @@ public class NewsFetcher {
 
             int status = connection.getResponseCode();
             if (status != 200) {
-                throw new IOException(String.valueOf(status));
+                throw new HTTPException(status);
             }
 
             InputStream inputStream = connection.getInputStream();
