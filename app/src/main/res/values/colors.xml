@@ -5,7 +5,7 @@
     <color name="transparent">#000000FF</color>
     <color name="nav_bar_colorPrimary">#673AB7</color>
     <color name="colorAccent">#7B5BB5</color>
-    <color name="gray">#414141</color>
+    <color name="gray">#282828</color>
     <color name="measureColor">@color/black</color>
     <color name="measureLineColorDefault">#FF0000</color>
     <color name="measureLineColorSuccess">#00FF00</color>

@@ -12,15 +12,18 @@ import java.util.List;
 public abstract class Instrument {
     private final String id;
     private final List<Tuning> tunings;
+    private final int stringsAmount;
 
 
-    public Instrument(@NonNull String id) {
+    public Instrument(@NonNull String id, int stringsAmount) {
         this.id = id;
+        this.stringsAmount = stringsAmount;
         tunings = new ArrayList<>();
     }
 
-    public Instrument(@NonNull String id, List<Tuning> tunings) {
+    public Instrument(@NonNull String id, int stringsAmount, List<Tuning> tunings) {
         this.id = id;
+        this.stringsAmount = stringsAmount;
         this.tunings = List.copyOf(tunings);
     }
 
@@ -38,6 +41,10 @@ public abstract class Instrument {
 
     public List<Tuning> getTunings() {
         return new ArrayList<>(tunings);
+    }
+
+    public int getStringsAmount() {
+        return stringsAmount;
     }
 
     public abstract String getName(Context context);

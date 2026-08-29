@@ -81,19 +81,26 @@ public class NewsFragment extends Fragment {
     private void handleFetchException(IOException e) {
         requireActivity().runOnUiThread(() -> {
             if (e instanceof NoInternetException) {
+                System.out.println("No internet!");
                 errorMainTextView.setText(getString(R.string.error));
                 errorSecondaryTextView.setText(getString(R.string.error_no_internet_connection));
             } else if (e instanceof HTTPException httpException) {
+                System.out.println("HTTP error!");
                 int httpCode = httpException.getCode();
                 errorMainTextView.setText(getString(R.string.error_http, httpCode));
                 if (Constants.httpCodeToStringId.containsKey(httpCode)) {
-                    errorSecondaryTextView.setText(getString(Constants.httpCodeToStringId.getOrDefault(httpCode)));
+                    errorSecondaryTextView.setText(getString(Constants.httpCodeToStringId.get(httpCode)));
                 } else {
                     errorSecondaryTextView.setText("");
                 }
             } else if (e instanceof SocketTimeoutException) {
+                System.out.println("Connection timeout!");
                 errorMainTextView.setText(getString(R.string.error));
                 errorSecondaryTextView.setText(getString(R.string.error_connection_timeout));
+            } else {
+                System.out.println("Unhandled news fetching exception: \"" + e.getMessage() + "\" with type of " + e.getClass().getSimpleName());
+                errorMainTextView.setText(getString(R.string.error));
+                errorSecondaryTextView.setText(e.getMessage());
             }
             if (newsSwipeRefresh.isRefreshing()) {
                 newsSwipeRefresh.setRefreshing(false);
