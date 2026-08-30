@@ -7,13 +7,13 @@ import java.util.List;
 public class JsonInstrument extends Instrument {
     private final String name;
 
-    public JsonInstrument(String id, String name) {
-        super(id);
+    public JsonInstrument(String id, String name, int stringCount) {
+        super(id, stringCount);
         this.name = name;
     }
 
-    public JsonInstrument(String id, String name, List<Tuning> tunings) {
-        super(id, tunings);
+    public JsonInstrument(String id, String name, int stringCount,  List<Tuning> tunings) {
+        super(id, stringCount, tunings);
         this.name = name;
     }
 

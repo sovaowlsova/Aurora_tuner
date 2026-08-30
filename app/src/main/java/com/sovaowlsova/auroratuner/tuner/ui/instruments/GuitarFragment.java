@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sovaowlsova.auroratuner.R;
-import com.sovaowlsova.auroratuner.core.model.InstrumentFragment;
+import com.sovaowlsova.auroratuner.core.model.BuiltInInstrumentFragment;
 
-public class GuitarFragment extends InstrumentFragment {
+public class GuitarFragment extends BuiltInInstrumentFragment {
 
     public GuitarFragment() {
         // Required empty public constructor

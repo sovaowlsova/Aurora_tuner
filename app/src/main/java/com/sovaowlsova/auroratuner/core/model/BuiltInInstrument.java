@@ -2,21 +2,19 @@ package com.sovaowlsova.auroratuner.core.model;
 
 import android.content.Context;
 
-import androidx.fragment.app.Fragment;
-
 import java.util.List;
 
 public class BuiltInInstrument extends Instrument {
     private final int nameResId;
-    private final Class<? extends InstrumentFragment> instrumentFragmentClass;
+    private final Class<? extends BuiltInInstrumentFragment> instrumentFragmentClass;
 
-    public BuiltInInstrument(String id, int nameResId, List<Tuning> tunings, Class<? extends InstrumentFragment> instrumentFragmentClass) {
-        super(id, tunings);
+    public BuiltInInstrument(String id, int nameResId, int countOfStrings, List<Tuning> tunings, Class<? extends BuiltInInstrumentFragment> instrumentFragmentClass) {
+        super(id, countOfStrings, tunings);
         this.nameResId = nameResId;
         this.instrumentFragmentClass = instrumentFragmentClass;
     }
 
-    public Class<? extends InstrumentFragment> getInstrumentFragmentClass() {
+    public Class<? extends BuiltInInstrumentFragment> getInstrumentFragmentClass() {
         return instrumentFragmentClass;
     }
 

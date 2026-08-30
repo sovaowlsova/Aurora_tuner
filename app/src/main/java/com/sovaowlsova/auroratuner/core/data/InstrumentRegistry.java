@@ -35,6 +35,7 @@ public class InstrumentRegistry {
         register(new BuiltInInstrument(
                 "Guitar6",
                 R.string.instrument_guitar,
+                6,
                 List.of(BuiltInTunings.Guitar6Standard.get(),
                         BuiltInTunings.Guitar6DropD.get(),
                         BuiltInTunings.Guitar6OpenC.get()
@@ -45,6 +46,7 @@ public class InstrumentRegistry {
         register(new BuiltInInstrument(
                 "Ukulele",
                 R.string.instrument_ukulele,
+                4,
                 List.of(
                         BuiltInTunings.UkuleleStandard.get(),
                         BuiltInTunings.UkuleleLowG.get(),

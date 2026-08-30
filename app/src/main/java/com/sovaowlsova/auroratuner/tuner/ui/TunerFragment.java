@@ -14,7 +14,6 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +25,9 @@ import android.widget.Toast;
 import com.sovaowlsova.auroratuner.R;
 import com.sovaowlsova.auroratuner.core.data.TuningDirection;
 import com.sovaowlsova.auroratuner.core.data.InstrumentRegistry;
-import com.sovaowlsova.auroratuner.core.data.Note;
 import com.sovaowlsova.auroratuner.core.model.BuiltInInstrument;
 import com.sovaowlsova.auroratuner.core.model.Instrument;
-import com.sovaowlsova.auroratuner.core.model.InstrumentFragment;
+import com.sovaowlsova.auroratuner.core.model.BuiltInInstrumentFragment;
 import com.sovaowlsova.auroratuner.core.util.FragmentFactory;
 import com.sovaowlsova.auroratuner.tuner.presentation.TunerViewModel;
 
@@ -46,7 +44,7 @@ public class TunerFragment extends Fragment {
     private ConstraintSet tunerSectionConstraintSet;
     private final int INSTRUMENT_VIEW_ID = R.id.instrument_view;
     private Instrument currentInstrument;
-    private InstrumentFragment currentInstrumentFragment;
+    private BuiltInInstrumentFragment currentInstrumentFragment;
     private TunerViewModel viewModel;
 
 
@@ -223,10 +221,10 @@ public class TunerFragment extends Fragment {
         }
 
         String instrumentTag = "instrument_" + instrument.getId();
-        InstrumentFragment instrumentFragment = (InstrumentFragment) getChildFragmentManager().findFragmentByTag(instrumentTag);
+        BuiltInInstrumentFragment instrumentFragment = (BuiltInInstrumentFragment) getChildFragmentManager().findFragmentByTag(instrumentTag);
         if (instrumentFragment == null) {
             if (instrument instanceof BuiltInInstrument builtInInstrument) {
-                instrumentFragment = (InstrumentFragment) FragmentFactory.create(builtInInstrument.getInstrumentFragmentClass());
+                instrumentFragment = (BuiltInInstrumentFragment) FragmentFactory.create(builtInInstrument.getInstrumentFragmentClass());
                 instrumentFragment.getTuningDirectionData().observe(getViewLifecycleOwner(), this::setTuningDirection);
                 instrumentFragment.getDeltaTextData().observe(getViewLifecycleOwner(), this::setDeltaText);
                 System.out.println("Instrument is built in");

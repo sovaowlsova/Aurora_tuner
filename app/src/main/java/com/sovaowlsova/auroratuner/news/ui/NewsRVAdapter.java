@@ -21,21 +21,6 @@ public class NewsRVAdapter extends RecyclerView.Adapter<NewsRVAdapter.viewholder
         this.newsEntries = newsEntries;
     }
 
-    public class viewholder extends RecyclerView.ViewHolder {
-        private final TextView titleTextView;
-        private final TextView articleTextView;
-        private final TextView dateTextView;
-
-        public viewholder(@NonNull View itemView) {
-            super(itemView);
-
-            titleTextView = itemView.findViewById(R.id.news_title_text_view);
-            articleTextView = itemView.findViewById(R.id.news_article_text_view);
-            dateTextView = itemView.findViewById(R.id.news_date_text_view);
-        }
-
-    }
-
     @NonNull
     @Override
     public viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -57,5 +42,20 @@ public class NewsRVAdapter extends RecyclerView.Adapter<NewsRVAdapter.viewholder
     @Override
     public int getItemCount() {
         return newsEntries.size();
+    }
+
+    public static class viewholder extends RecyclerView.ViewHolder {
+        private final TextView titleTextView;
+        private final TextView articleTextView;
+        private final TextView dateTextView;
+
+        public viewholder(@NonNull View itemView) {
+            super(itemView);
+
+            titleTextView = itemView.findViewById(R.id.news_title_text_view);
+            articleTextView = itemView.findViewById(R.id.news_article_text_view);
+            dateTextView = itemView.findViewById(R.id.news_date_text_view);
+        }
+
     }
 }
