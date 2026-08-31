@@ -21,27 +21,17 @@ import java.util.HashSet;
 import java.util.List;
 
 public abstract class BuiltInInstrumentFragment extends InstrumentFragment {
-    protected static final String ARG_TUNING = "tuning";
     protected final HashMap<Note, List<Pair<ImageView, TextView>>> noteToUi = new HashMap<>();
     protected final HashSet<Note> tunedStrings = new HashSet<>();
     protected final HashSet<TextView> highlightedNoteTextViews = new HashSet<>();
     protected final HashSet<Pair<ImageView, TextView>> currentNoteUi = new HashSet<>();
 
-    protected Tuning tuning;
     protected Tuning firstTuning;
 
     protected int[] stringCircleIds;
     protected int[] stringTextViewIds;
     protected ImageView[] stringCircles;
     protected TextView[] stringTextViews;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            tuning = (Tuning) getArguments().getSerializable(ARG_TUNING);
-        }
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

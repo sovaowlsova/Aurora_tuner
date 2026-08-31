@@ -1,5 +1,6 @@
 package com.sovaowlsova.auroratuner.tuner.ui.instruments;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,12 +10,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sovaowlsova.auroratuner.R;
+import com.sovaowlsova.auroratuner.core.data.Note;
 import com.sovaowlsova.auroratuner.core.model.Tuning;
+import com.sovaowlsova.auroratuner.tuner.ui.TunerNoteInfo;
 
 public class GeneratedNotesRVAdapter extends RecyclerView.Adapter<GeneratedNotesRVAdapter.viewholder> {
-    private final Tuning tuning;
+    private Tuning tuning;
 
     public GeneratedNotesRVAdapter(Tuning tuning) {
+        this.tuning = tuning;
+    }
+
+    public void setNote(TunerNoteInfo info) {
+        Note closestString = tuning.getClosestString(info.frequency());
+        int firstIndexOfNote = tuning.getNotes().indexOf(closestString);
+    }
+
+    public void setTuning(Tuning tuning) {
         this.tuning = tuning;
     }
 
@@ -27,7 +39,7 @@ public class GeneratedNotesRVAdapter extends RecyclerView.Adapter<GeneratedNotes
 
     @Override
     public void onBindViewHolder(@NonNull viewholder holder, int position) {
-        holder.noteNumberText.setText(position);
+        holder.noteNumberText.setText(String.valueOf(position + 1));
         holder.noteText.setText(tuning.getNotes().get(position).getName());
     }
 
@@ -45,6 +57,15 @@ public class GeneratedNotesRVAdapter extends RecyclerView.Adapter<GeneratedNotes
 
             this.noteText = itemView.findViewById(R.id.note_text);
             this.noteNumberText = itemView.findViewById(R.id.note_number_text);
+        }
+
+        public void highlightNote(boolean inTune) {
+            int newTextColor = inTune ? Color.GREEN : Color.YELLOW;
+            noteText.setTextColor(newTextColor);
+        }
+
+        public void unhighlightNote() {
+            noteText.setTextColor(Color.WHITE);
         }
     }
 }

@@ -55,6 +55,15 @@ public class InstrumentRegistry {
                 UkuleleFragment.class
                 )
         );
+        register(new TestGeneratedInstrument(
+                "TestGenerated",
+                "Test",
+                10,
+                List.of(
+                        new Tuning("TestGenerated", "Chinese",
+                                new Note[] {Note.C4, Note.C4sharp, Note.D4, Note.A3, Note.E4, Note.F4, Note.G3, Note.G2, Note.A3, Note.F4sharp})
+                )
+        ));
     }
 
     public List<Instrument> getAll() {

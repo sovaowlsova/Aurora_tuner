@@ -7,7 +7,7 @@ public class FragmentFactory {
         try {
             return fragmentClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't create fragment: " + fragmentClass.getSimpleName());
+            throw new RuntimeException("Couldn't create fragment: " + fragmentClass.getSimpleName() + " because: " + e.getMessage());
         }
     }
 }

@@ -28,8 +28,10 @@ import com.sovaowlsova.auroratuner.core.data.InstrumentRegistry;
 import com.sovaowlsova.auroratuner.core.model.BuiltInInstrument;
 import com.sovaowlsova.auroratuner.core.model.Instrument;
 import com.sovaowlsova.auroratuner.core.model.BuiltInInstrumentFragment;
+import com.sovaowlsova.auroratuner.core.model.InstrumentFragment;
 import com.sovaowlsova.auroratuner.core.util.FragmentFactory;
 import com.sovaowlsova.auroratuner.tuner.presentation.TunerViewModel;
+import com.sovaowlsova.auroratuner.tuner.ui.instruments.GeneratedInstrumentFragment;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,7 +46,7 @@ public class TunerFragment extends Fragment {
     private ConstraintSet tunerSectionConstraintSet;
     private final int INSTRUMENT_VIEW_ID = R.id.instrument_view;
     private Instrument currentInstrument;
-    private BuiltInInstrumentFragment currentInstrumentFragment;
+    private InstrumentFragment currentInstrumentFragment;
     private TunerViewModel viewModel;
 
 
@@ -220,27 +222,21 @@ public class TunerFragment extends Fragment {
             return;
         }
 
-        String instrumentTag = "instrument_" + instrument.getId();
-        BuiltInInstrumentFragment instrumentFragment = (BuiltInInstrumentFragment) getChildFragmentManager().findFragmentByTag(instrumentTag);
+        String instrumentTag = instrument instanceof BuiltInInstrument ? "instrument_" + instrument.getId() : "json_instrument_fragment";
+        InstrumentFragment instrumentFragment = (InstrumentFragment) getChildFragmentManager().findFragmentByTag(instrumentTag);
         if (instrumentFragment == null) {
             if (instrument instanceof BuiltInInstrument builtInInstrument) {
                 instrumentFragment = (BuiltInInstrumentFragment) FragmentFactory.create(builtInInstrument.getInstrumentFragmentClass());
-                instrumentFragment.getTuningDirectionData().observe(getViewLifecycleOwner(), this::setTuningDirection);
-                instrumentFragment.getDeltaTextData().observe(getViewLifecycleOwner(), this::setDeltaText);
                 System.out.println("Instrument is built in");
             } else {
-                // TODO: implement JSON instruments fragments
+                instrumentFragment = new GeneratedInstrumentFragment(instrument.getTunings().get(0));
+                System.out.println("Instrument is generated");
             }
         } else {
             System.out.println("Instrument fragment already exists. Connecting live data...");
-            instrumentFragment.getTuningDirectionData().observe(getViewLifecycleOwner(), this::setTuningDirection);
-            instrumentFragment.getDeltaTextData().observe(getViewLifecycleOwner(), this::setDeltaText);
         }
-
-        if (instrumentFragment == null) {
-            System.out.println("Could not find or create fragment for instrument id: " + instrument.getId());
-            return;
-        }
+        instrumentFragment.getTuningDirectionData().observe(getViewLifecycleOwner(), this::setTuningDirection);
+        instrumentFragment.getDeltaTextData().observe(getViewLifecycleOwner(), this::setDeltaText);
 
         if (!instrumentFragment.isAdded()) {
             System.out.println("Instrument is not added, adding new instrument fragment with tag: " + instrumentTag);
