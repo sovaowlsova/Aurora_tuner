@@ -11,8 +11,8 @@ An in-development musical tuner app for Android. The app features different inst
 * ✅ News section with refresh feature and error handling
 * ✅ News are fetched from a GitHub pages website (https://sovaowlsova.github.io/auroratuner-github.io/)
 * ✅ Guitar and ukulele pictures drawn in Figma
-* ✅  Automatic instrument fragment creation for user-generated instruments
-* ✅ Russian language
+* ✅ Automatic instrument fragment creation for user-generated instruments
+* ✅ Russian and English languages
 ### Planned features:
 * 🚧 Tuning editor which allows users to create and share their own instruments and tunings
 * 🚧 JSON file structure for user-generated tunings
