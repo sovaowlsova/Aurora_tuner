@@ -75,6 +75,14 @@ public class TunerFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (!isHidden()) {
+            viewModel.startTuner(getContext());
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         System.out.println("Creating tuner...");
         super.onCreate(savedInstanceState);
