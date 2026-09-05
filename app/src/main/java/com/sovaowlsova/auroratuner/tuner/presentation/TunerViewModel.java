@@ -47,6 +47,7 @@ public class TunerViewModel extends ViewModel {
     private final TunerEngine engine;
     private final List<Instrument> allInstruments;
     private final SavedStateHandle savedStateHandle;
+    Integer currentInstrumentPosition;
     String KEY_CURRENT_INSTRUMENT_POSITON = "current_instrument";
     String KEY_CURRENT_TUNING_POSITION = "current_tuning";
 
@@ -113,7 +114,15 @@ public class TunerViewModel extends ViewModel {
         }
         currentInstrumentFragmentState.postValue(selectedInstrument);
         savedStateHandle.set(KEY_CURRENT_INSTRUMENT_POSITON, position);
-        setTuningSpinnerState(selectedInstrument);
+        if (currentInstrumentPosition == null) {
+            currentInstrumentPosition = position;
+            setTuningSpinnerState(selectedInstrument);
+        } else if (currentInstrumentPosition != position) {
+            currentInstrumentPosition = position;
+            setTuningSpinnerState(selectedInstrument);
+        } else {
+            System.out.println("No need to set new tunings since the instrument is the same");
+        }
     }
 
     public void selectTuning(int position) {

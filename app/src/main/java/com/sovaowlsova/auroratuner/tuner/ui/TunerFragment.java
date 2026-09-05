@@ -213,6 +213,7 @@ public class TunerFragment extends Fragment {
         );
         adapter.setDropDownViewResource(R.layout.dropdown_item);
         tunerSelectionDropdown.setAdapter(adapter);
+        tunerSelectionDropdown.setText(tuningNames.get(0), false);
     }
 
     private void setInstrumentFragment(@NonNull Instrument instrument) {

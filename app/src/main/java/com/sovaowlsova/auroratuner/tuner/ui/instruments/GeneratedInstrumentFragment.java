@@ -6,7 +6,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +27,6 @@ public class GeneratedInstrumentFragment extends InstrumentFragment {
     private RecyclerView recyclerView;
     private TextView noTuningsErrorView;
     GeneratedNotesRVAdapter rvAdapter;
-    protected final HashSet<Integer> tunedStrings = new HashSet<>();
-    protected final HashSet<Integer> highlightedNoteNumbers = new HashSet<>();
     Tuning tuning;
     public GeneratedInstrumentFragment(Tuning tuning) {
         this.tuning = tuning;
@@ -58,13 +58,15 @@ public class GeneratedInstrumentFragment extends InstrumentFragment {
 
     private void configureRecyclerView() {
         rvAdapter = new GeneratedNotesRVAdapter(tuning);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(
+        LinearLayoutManager layoutManager = new CenterLayoutManager(
                 getContext(),
                 LinearLayoutManager.HORIZONTAL,
                 false
         );
+
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(rvAdapter);
+        recyclerView.setItemAnimator(null);
         rvAdapter.notifyDataSetChanged();
     }
 
@@ -99,52 +101,14 @@ public class GeneratedInstrumentFragment extends InstrumentFragment {
         updateDeltaText(closestString, info.frequency());
 
         int firstIndexOfNote = tuning.getNotes().indexOf(closestString);
+        rvAdapter.setNote(info);
         recyclerView.smoothScrollToPosition(firstIndexOfNote);
-        highlightNote(firstIndexOfNote, info.inTune());
     }
 
     @Override
     protected void resetUi() {
-        highlightedNoteNumbers.clear();
-        tunedStrings.clear();
-        for (int i = 0; i < tuning.getNotes().size(); i++) {
-            unhighlightNote(i);
-        }
-    }
-
-    private void highlightNote(int position, boolean inTune) {
-        if (rvAdapter == null) {
-            System.out.println("Trying to set highlight note with null rvAdapter");
-            return;
-        }
-
-        GeneratedNotesRVAdapter.viewholder viewholder =
-                (GeneratedNotesRVAdapter.viewholder) recyclerView.findViewHolderForAdapterPosition(position);
-
-        if (viewholder == null) {
-            return;
-        }
-
-        highlightedNoteNumbers.stream().filter(n -> !tunedStrings.contains(n)).forEach(this::unhighlightNote);
-
-        if (tunedStrings.contains(position)) {
-            return;
-        }
-        viewholder.highlightNote(inTune);
-        if (inTune) {
-            tunedStrings.add(position);
-        } else {
-            highlightedNoteNumbers.clear();
-            highlightedNoteNumbers.add(position);
-        }
-    }
-
-    private void unhighlightNote(int position) {
-        GeneratedNotesRVAdapter.viewholder viewholder =
-                (GeneratedNotesRVAdapter.viewholder) recyclerView.findViewHolderForAdapterPosition(position);
-
-        if (viewholder != null) {
-            viewholder.unhighlightNote();
+        if (rvAdapter != null) {
+            rvAdapter.resetUI();
         }
     }
 }

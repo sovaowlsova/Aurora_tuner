@@ -18,4 +18,10 @@
     <string name="wrong_amount_of_notes">Непарвильное количество нот в строю</string>
     <string name="in_development_marker">В разработке</string>
     <string name="settings_content_description">настройки</string>
+    <string name="news_url_error">URL новостей невалидна</string>
+    <string name="error">Ошибка</string>
+    <string name="error_no_internet_connection">нет интернета</string>
+    <string name="error_http">HTTP ошибка: %1$d</string>
+    <string name="error_connection_timeout">превышено время ожидания</string>
+    <string name="error_no_tunings">Для данного инструмента не найдено строёв</string>
 </resources>
