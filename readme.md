@@ -1,5 +1,6 @@
 # 🎵 Aurora Tuner 
 An in-development musical tuner app for Android. The app features different instruments and various tunings for each of them, including built-in and user-generated ones
+<img width="1172" height="1151" alt="showcase" src="https://github.com/user-attachments/assets/d0c27e4a-d70b-45ae-9076-5b1507b9572d" />
 ## 🎯 Features
 ### Implemented features:
 * ✅ Instrument selection
