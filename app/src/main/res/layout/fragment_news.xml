@@ -31,7 +31,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+        <TextView
         android:id="@+id/news_error_main_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
