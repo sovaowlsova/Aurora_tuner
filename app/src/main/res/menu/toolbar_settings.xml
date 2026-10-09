@@ -2,8 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/toolbar_settings"
-        android:icon="@drawable/settings_icon"
+        android:id="@+id/toolbar_back_button"
+        android:icon="@drawable/back_arrow"
         android:background="@color/transparent"
+        android:title="@string/back_toolbar_title"
         app:showAsAction="always"/>
 </menu>
