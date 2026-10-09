@@ -1,6 +1,7 @@
 package com.sovaowlsova.auroratuner;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -115,13 +116,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         System.out.println("Changing toolbar");
-        menu.clear();
-        if (settingsFragment != null && currentFragment == settingsFragment) {
-            getMenuInflater().inflate(R.menu.toolbar_settings, menu);
-        } else {
-            getMenuInflater().inflate(R.menu.toolbar_default, menu);
-        }
-
+        menu.findItem(R.id.toolbar_settings).setVisible(settingsFragment == null || currentFragment != settingsFragment);
         return true;
     }
 
@@ -134,10 +129,10 @@ public class MainActivity extends AppCompatActivity {
             bottomNav.setVisibility(BottomNavigationView.GONE);
             lastBottomNavItemId = bottomNav.getSelectedItemId();
             settingsFragment = getOrCreateFragment(settingsFragment, SettingsFragment.class, FragmentTag.SETTINGS);
-            switchMainView(settingsFragment, true);
+            switchMainView(settingsFragment, true, true);
             invalidateOptionsMenu();
-        } else if (id == R.id.toolbar_back_button) {
-            handleBackButton();
+        } else if (id == android.R.id.home) {
+            getOnBackPressedDispatcher().onBackPressed();
         }
 
         return super.onOptionsItemSelected(item);
@@ -165,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void switchMainView(Fragment targetFragment, boolean showTitle) {
+    private void switchMainView(Fragment targetFragment, boolean showTitle, boolean showBackButton) {
         System.out.println("Switching main view...");
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setTransition(FragmentTransaction.TRANSIT_NONE);
@@ -175,6 +170,10 @@ public class MainActivity extends AppCompatActivity {
         }
         transaction.runOnCommit(() -> {
                 getSupportActionBar().setDisplayShowTitleEnabled(showTitle);
+                ActionBar actionBar = getSupportActionBar();
+                if (actionBar != null) {
+                    actionBar.setDisplayHomeAsUpEnabled(showBackButton);
+                }
             }
         );
         transaction.show(targetFragment).commit();
@@ -277,7 +276,9 @@ public class MainActivity extends AppCompatActivity {
 
         System.out.println("target is null: " + ((targetFragment == null)));
         if (targetFragment != null && targetFragment != currentFragment) {
-            switchMainView(targetFragment, targetFragment != tunerFragment);
+            switchMainView(targetFragment,
+                    targetFragment != tunerFragment,
+                    targetFragment == settingsFragment);
             return true;
         } else {
             System.out.println("Cancelling the switch: already there");
