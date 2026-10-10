@@ -27,8 +27,6 @@ import com.sovaowlsova.auroratuner.tuner.ui.TunerFragment;
 
 import androidx.annotation.NonNull;
 
-import java.util.Map;
-
 
 public class MainActivity extends AppCompatActivity {
     String audioPermission = Manifest.permission.RECORD_AUDIO;
@@ -41,19 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private Fragment permissionFragment;
     private Fragment settingsFragment;
     private BottomNavigationView bottomNav;
-    private MaterialToolbar toolbar;
-
-    private final Map<FragmentTag, Integer> fragmentTagToId = Map.of(
-        FragmentTag.NEWS, R.id.newsFragment,
-        FragmentTag.EDITOR, R.id.editorFragment,
-        FragmentTag.TUNER, R.id.tunerFragment
-    );
-
-    private static final Map<Integer, FragmentTag> idToFragmentTag = Map.of(
-            R.id.newsFragment, FragmentTag.NEWS,
-            R.id.editorFragment, FragmentTag.EDITOR,
-            R.id.tunerFragment, FragmentTag.TUNER
-    );
     private static final String KEY_SELECTED_TAB = "selected_tab";
     private static final String KEY_SETTINGS_OPEN = "settings_opened";
 
@@ -64,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         bottomNav = findViewById(R.id.bottomNavigationPanel);
-        toolbar = findViewById(R.id.mainToolbar);
+        MaterialToolbar toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
 
         OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
@@ -126,10 +111,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.toolbar_settings) {
             System.out.println("Settings!");
-            bottomNav.setVisibility(BottomNavigationView.GONE);
             lastBottomNavItemId = bottomNav.getSelectedItemId();
             settingsFragment = getOrCreateFragment(settingsFragment, SettingsFragment.class, FragmentTag.SETTINGS);
-            switchMainView(settingsFragment, true, true);
+            switchMainView(settingsFragment, true, true, false);
             invalidateOptionsMenu();
         } else if (id == android.R.id.home) {
             getOnBackPressedDispatcher().onBackPressed();
@@ -153,14 +137,16 @@ public class MainActivity extends AppCompatActivity {
 
         if (settingsOpen) {
             lastBottomNavItemId = selectedTabId;
-            bottomNav.setVisibility(BottomNavigationView.GONE);
             currentFragment = settingsFragment;
         } else {
             bottomNav.setSelectedItemId(selectedTabId);
         }
     }
 
-    private void switchMainView(Fragment targetFragment, boolean showTitle, boolean showBackButton) {
+    private void switchMainView(Fragment targetFragment,
+                                boolean showTitle,
+                                boolean showBackButton,
+                                boolean showBottomNav) {
         System.out.println("Switching main view...");
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setTransition(FragmentTransaction.TRANSIT_NONE);
@@ -169,11 +155,12 @@ public class MainActivity extends AppCompatActivity {
             transaction.hide(currentFragment);
         }
         transaction.runOnCommit(() -> {
-                getSupportActionBar().setDisplayShowTitleEnabled(showTitle);
                 ActionBar actionBar = getSupportActionBar();
                 if (actionBar != null) {
+                    getSupportActionBar().setDisplayShowTitleEnabled(showTitle);
                     actionBar.setDisplayHomeAsUpEnabled(showBackButton);
                 }
+                bottomNav.setVisibility(showBottomNav ? BottomNavigationView.VISIBLE : BottomNavigationView.GONE);
             }
         );
         transaction.show(targetFragment).commit();
@@ -228,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("Back button pressed");
         if (currentFragment == settingsFragment) {
             bottomNav.setSelectedItemId(lastBottomNavItemId);
-            bottomNav.setVisibility(BottomNavigationView.VISIBLE);
             invalidateOptionsMenu();
         } else {
             finish();
@@ -278,7 +264,8 @@ public class MainActivity extends AppCompatActivity {
         if (targetFragment != null && targetFragment != currentFragment) {
             switchMainView(targetFragment,
                     targetFragment != tunerFragment,
-                    targetFragment == settingsFragment);
+                    targetFragment == settingsFragment,
+                    targetFragment != settingsFragment);
             return true;
         } else {
             System.out.println("Cancelling the switch: already there");
