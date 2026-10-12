@@ -30,7 +30,7 @@
     <string name="error_no_tunings">No tunings found for this instrument</string>
     <string name="settings_toolbar_title">Settings</string>
 
-    <!--HTTP errors-->
+    <!-- HTTP error s-->
     <string name="error_http_400" translatable="false">Bad Request</string>
     <string name="error_http_401" translatable="false">Unauthorized</string>
     <string name="error_http_403" translatable="false">Forbidden</string>
@@ -41,6 +41,22 @@
     <string name="error_http_502" translatable="false">Bad Gateway</string>
     <string name="error_http_503" translatable="false">Service Unavailable</string>
     <string name="error_http_504" translatable="false">Gateway Timeout</string>
+
+    <!-- Editor -->>
+    <string name="editor_general_id_hint">ID</string>
+    <string name="editor_general_name_hint">Name</string>
+    <string name="editor_instrument_id_hint">ID of the instrument this tuning is being created for</string>
+    <string name="editor_tuning_id_hint">ID of the tuning</string>
+    <string name="editor_author_hint">Author\'s nickname (optional)</string>
+    <string name="editor_instrument_name_hint">Localized instrument names</string>
+    <string name="editor_tuning_name_hint">Localized tuning names</string>
+    <string name="editor_notes_text">Notes</string>
+    <string name="editor_notes_total">Total notes: %1$d</string>
+    <string name="editor_json_preview_menu_show">.JSON preview (show)</string>
+    <string name="editor_json_preview_menu_hide">.JSON preview (hide)</string>
+    <string name="editor_export_tuning_button">Export tuning</string>
+    <string name="editor_import_tuning_button">Edit tuning</string>
+    <string name="editor_language_dropdown_hint">Language</string>
 
     <string-array name="instruments_array">
         <item>@string/instrument_guitar</item>
