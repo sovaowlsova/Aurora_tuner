@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     app:strokeWidth="0dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +26,7 @@
             android:layout_height="match_parent"
             android:fontFamily="monospace"
             android:inputType="none"
-            android:text="@string/standard_tuning"
+            android:hint="@string/editor_language_dropdown_hint"
             android:textSize="16sp"
             tools:ignore="LabelFor" />
 
@@ -37,6 +38,7 @@
             android:layout_marginStart="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editor_localized_name_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/editor_general_name_hint" />

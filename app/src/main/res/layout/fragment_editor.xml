@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".editor.ui.EditorFragment"
-    android:layout_marginTop="?actionBarSize"
-    android:nestedScrollingEnabled="false">
+    android:layout_marginTop="?actionBarSize">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +16,6 @@
         android:paddingTop="15dp">
 
         <TextView
-            android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/editor_instrument_id_hint"
@@ -25,16 +23,16 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/instrument_id_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/editor_general_id_hint" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/textView5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/editor_instrument_name_hint"
@@ -46,10 +44,22 @@
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
             tools:listitem="@layout/localized_name_item"/>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/editor_add_instrument_name_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/gray"
+            app:icon="@drawable/add_icon"
+            app:cornerRadius="0dp"
+            android:text="@string/editor_add_language"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
         <TextView
-            android:id="@+id/textView6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/editor_tuning_id_hint"
@@ -58,9 +68,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tuning_id_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/editor_general_id_hint" />
@@ -79,10 +90,10 @@
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
             tools:listitem="@layout/localized_name_item"/>
 
         <TextView
-            android:id="@+id/textView8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/editor_notes_text"
@@ -90,7 +101,6 @@
             android:layout_marginTop="30dp"/>
 
         <TextView
-            android:id="@+id/textView9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/editor_notes_total"
@@ -103,9 +113,29 @@
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
             tools:listitem="@layout/editor_note_item"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/editor_author_hint"
+            android:layout_marginTop="30dp"
+            android:textSize="20sp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/author_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/editor_nickname_hint" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <Button
+            android:id="@+id/editor_export_tuning_button"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="30dp"

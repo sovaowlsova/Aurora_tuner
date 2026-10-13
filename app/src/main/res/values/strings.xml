@@ -57,6 +57,11 @@
     <string name="editor_export_tuning_button">Export tuning</string>
     <string name="editor_import_tuning_button">Edit tuning</string>
     <string name="editor_language_dropdown_hint">Language</string>
+    <string name="editor_note_hint">Note</string>
+    <string name="editor_nickname_hint">Nickname</string>
+    <string name="editor_invalid_input">Invalid input</string>
+    <string name="editor_empty_input_error">Required</string>
+    <string name="editor_add_language">Add language</string>
 
     <string-array name="instruments_array">
         <item>@string/instrument_guitar</item>
