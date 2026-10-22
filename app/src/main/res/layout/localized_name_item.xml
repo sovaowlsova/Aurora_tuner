@@ -20,28 +20,50 @@
             android:layout_height="wrap_content"
             android:hint="@string/editor_language_dropdown_hint">
 
-        <AutoCompleteTextView
-            android:id="@+id/editor_language_selection_dropdown"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="monospace"
-            android:inputType="none"
-            android:hint="@string/editor_language_dropdown_hint"
-            android:textSize="16sp"
-            tools:ignore="LabelFor" />
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/editor_language_selection_dropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:inputType="none"
+                android:textSize="16sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp">
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editor_localized_name_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:inputType="text"
+                android:imeOptions="actionDone"
                 android:hint="@string/editor_general_name_hint" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/editor_remove_name_button"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:insetTop="6dp"
+            android:insetBottom="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
+            android:padding="0dp"
+            app:cornerRadius="5dp"
+            android:backgroundTint="@color/red"
+            app:icon="@drawable/remove_icon"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconTint="@android:color/white" />
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

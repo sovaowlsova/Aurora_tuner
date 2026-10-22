@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="monospace"
             android:text="Title"
-            android:textSize="30sp"
+            android:textSize="24sp"
             android:textStyle="bold"/>
 
         <TextView
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="monospace"
             android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-            android:textSize="15sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/news_date_text_view"
@@ -42,7 +42,7 @@
             android:layout_marginEnd="10dp"
             android:fontFamily="monospace"
             android:text="January 12, 12:00"
-            android:textSize="11sp"
+            android:textSize="12sp"
             android:textStyle="italic"
             android:textAlignment="viewEnd" />
 

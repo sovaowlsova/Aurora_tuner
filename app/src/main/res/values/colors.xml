@@ -9,4 +9,5 @@
     <color name="measureColor">@color/black</color>
     <color name="measureLineColorDefault">#FF0000</color>
     <color name="measureLineColorSuccess">#00FF00</color>
+    <color name="red">#FF0000</color>
 </resources>

@@ -62,6 +62,8 @@
     <string name="editor_invalid_input">Invalid input</string>
     <string name="editor_empty_input_error">Required</string>
     <string name="editor_add_language">Add language</string>
+    <string name="editor_cant_delete_default_language_error">Can not delete the default language</string>
+    <string name="editor_max_capacity_error">Max capacity reached</string>
 
     <string-array name="instruments_array">
         <item>@string/instrument_guitar</item>

@@ -1,5 +1,6 @@
 package com.sovaowlsova.auroratuner.editor.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,12 +101,22 @@ public class EditorFragment extends Fragment {
 
     private boolean validateInput() {
         boolean valid = true;
+        Context context = requireContext();
 
-        if (instrumentIdInput.getText().isEmpty()) {
+        if (isInputEmpty(instrumentIdInput)) {
             valid = false;
-            instrumentIdInput.setError(requireContext().getString(R.string.editor_empty_input_error));
+            instrumentIdInput.setError(context.getString(R.string.editor_empty_input_error));
+        }
+
+        if (isInputEmpty(tuningIdInput)) {
+            valid = false;
+            tuningIdInput.setError(context.getString(R.string.editor_empty_input_error));
         }
 
         return valid;
+    }
+
+    private boolean isInputEmpty(TextInputEditText input) {
+        return input.getText().toString().trim().isEmpty();
     }
 }
