@@ -1,10 +1,12 @@
 package com.sovaowlsova.auroratuner.editor.model;
 
 import android.content.Context;
-import android.text.Layout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
@@ -26,6 +28,8 @@ public class LocalizedNamesRVAdapter extends RecyclerView.Adapter<LocalizedNames
 
     public LocalizedNamesRVAdapter(List<String> locales) {
         this.locales = locales;
+        addLanguage();
+        data.get(0).setLocale("en");
     }
 
     public List<LanguageItem> getData() {
@@ -55,12 +59,16 @@ public class LocalizedNamesRVAdapter extends RecyclerView.Adapter<LocalizedNames
         notifyItemRangeChanged(position, data.size() - position);
     }
 
+    protected void setLocaleToLangItem(int langItemPosition, int localePosition) {
+        data.get(langItemPosition).setLocale(locales.get(localePosition));
+    }
+
     @NonNull
     @Override
     public viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.localized_name_item, parent, false);
         context = parent.getContext();
-        return new viewholder(item, this::removeLanguage);
+        return new viewholder(item, this::removeLanguage, this::setLocaleToLangItem);
     }
 
     @Override
@@ -72,6 +80,7 @@ public class LocalizedNamesRVAdapter extends RecyclerView.Adapter<LocalizedNames
         );
         adapter.setDropDownViewResource(R.layout.dropdown_item);
         holder.languagesDropdown.setAdapter(adapter);
+        holder.bindToLanguageItem(data.get(position));
 
         if (position == 0) {
             holder.removeButton.setVisibility(View.GONE);
@@ -85,15 +94,47 @@ public class LocalizedNamesRVAdapter extends RecyclerView.Adapter<LocalizedNames
     }
 
     public static class viewholder extends RecyclerView.ViewHolder {
-        AutoCompleteTextView languagesDropdown;
-        TextInputEditText nameInput;
-        MaterialButton removeButton;
+        private final AutoCompleteTextView languagesDropdown;
+        private final TextInputEditText nameInput;
+        private final MaterialButton removeButton;
+        private TextWatcher textWatcher;
+        private final int NO_ITEM_SELECTED = -1;
 
         public interface onRemoveClickListener {
             void onRemove(int position);
         }
 
-        public viewholder(@NonNull View itemView, onRemoveClickListener removeClickListener) {
+        public interface onLocaleSelectedCallback {
+            void onSelect(int langItemPosition, int localePosition);
+        }
+
+        public void bindToLanguageItem(LanguageItem item) {
+            if (textWatcher != null) {
+                nameInput.removeTextChangedListener(textWatcher);
+            }
+
+            textWatcher = new TextWatcher() {
+
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    item.setName(charSequence.toString());
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            };
+
+            nameInput.addTextChangedListener(textWatcher);
+        }
+
+        public viewholder(@NonNull View itemView, onRemoveClickListener removeClickListener, onLocaleSelectedCallback localeSelectedCallback) {
             super(itemView);
 
             this.languagesDropdown = itemView.findViewById(R.id.editor_language_selection_dropdown);
@@ -105,6 +146,10 @@ public class LocalizedNamesRVAdapter extends RecyclerView.Adapter<LocalizedNames
                 if (position != RecyclerView.NO_POSITION) {
                     removeClickListener.onRemove(position);
                 }
+            });
+
+            languagesDropdown.setOnItemClickListener((adapterView, view, i, l) -> {
+                localeSelectedCallback.onSelect(getBindingAdapterPosition(), i);
             });
         }
     }

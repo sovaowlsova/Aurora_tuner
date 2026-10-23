@@ -19,8 +19,10 @@ import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.sovaowlsova.auroratuner.R;
+import com.sovaowlsova.auroratuner.editor.model.LanguageItem;
 import com.sovaowlsova.auroratuner.editor.model.LocalizedNamesRVAdapter;
 
+import java.util.Collections;
 import java.util.List;
 
 public class EditorFragment extends Fragment {
@@ -33,7 +35,7 @@ public class EditorFragment extends Fragment {
     private MaterialButton addInstrumentNameButton;
     private Button exportTuningButton;
 
-    LocalizedNamesRVAdapter instrumentNamesAdapter;
+    private LocalizedNamesRVAdapter instrumentNamesAdapter;
 
 
     public EditorFragment() {
@@ -58,7 +60,7 @@ public class EditorFragment extends Fragment {
         setContextualVariables();
         exportTuningButton.setOnClickListener(this::exportTuningToJson);
 
-        instrumentNamesAdapter = new LocalizedNamesRVAdapter(List.of("ru", "en", "br"));
+        instrumentNamesAdapter = new LocalizedNamesRVAdapter(List.of("en", "ru", "br"));
         LinearLayoutManager layoutManager = new LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.VERTICAL,
@@ -66,7 +68,6 @@ public class EditorFragment extends Fragment {
         );
         localizedInstrumentNamesRecyclerView.setLayoutManager(layoutManager);
         localizedInstrumentNamesRecyclerView.setAdapter(instrumentNamesAdapter);
-        instrumentNamesAdapter.addLanguage();
 
         addInstrumentNameButton.setOnClickListener(view1 -> {
             instrumentNamesAdapter.addLanguage();
@@ -112,6 +113,10 @@ public class EditorFragment extends Fragment {
             valid = false;
             tuningIdInput.setError(context.getString(R.string.editor_empty_input_error));
         }
+
+        List<LanguageItem> instrumentNames = instrumentNamesAdapter.getData();
+        System.out.println("Instrument names:");
+        instrumentNames.forEach(i -> System.out.println(i.getLocale() + ": " + i.getName()));
 
         return valid;
     }
