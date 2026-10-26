@@ -13,34 +13,48 @@
         android:orientation="horizontal"
         android:layout_marginTop="10dp">
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/editor_default_language_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:minWidth="120dp"
+            android:gravity="center_vertical|start"
+            android:textSize="16sp"
+            android:background="@drawable/text_border"
+            android:paddingStart="16dp"
+            android:paddingEnd="10dp"
+            android:layout_marginTop="5dp" />
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/editor_language_selection"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/editor_language_dropdown_hint">
+            android:minWidth="120dp"
+            android:visibility="gone">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/editor_language_selection_dropdown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="monospace"
                 android:inputType="none"
+                android:maxLines="1"
                 android:textSize="16sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="4"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="0dp"
             android:layout_marginEnd="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editor_localized_name_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:maxLines="1"
                 android:inputType="text"
                 android:imeOptions="actionDone"

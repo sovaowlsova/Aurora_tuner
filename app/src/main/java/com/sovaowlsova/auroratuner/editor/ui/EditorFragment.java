@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.sovaowlsova.auroratuner.R;
+import com.sovaowlsova.auroratuner.core.util.Constants;
 import com.sovaowlsova.auroratuner.editor.model.LanguageItem;
 import com.sovaowlsova.auroratuner.editor.model.LocalizedNamesRVAdapter;
 
@@ -60,7 +61,7 @@ public class EditorFragment extends Fragment {
         setContextualVariables();
         exportTuningButton.setOnClickListener(this::exportTuningToJson);
 
-        instrumentNamesAdapter = new LocalizedNamesRVAdapter(List.of("en", "ru", "br"));
+        instrumentNamesAdapter = new LocalizedNamesRVAdapter(Constants.supportedLocales, requireContext());
         LinearLayoutManager layoutManager = new LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.VERTICAL,
