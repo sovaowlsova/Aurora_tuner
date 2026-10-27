@@ -29,6 +29,9 @@
                 android:id="@+id/instrument_id_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:inputType="text"
+                android:imeOptions="actionDone"
                 android:hint="@string/editor_general_id_hint" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -38,14 +41,21 @@
             android:text="@string/editor_instrument_name_hint"
             android:textSize="20sp"
             android:layout_marginTop="30dp"/>
+        
+        <TextView
+            android:id="@+id/editor_localized_names_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:textStyle="italic"
+            android:visibility="gone"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/editor_instrument_names"
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            tools:listitem="@layout/localized_name_item"/>
+            android:nestedScrollingEnabled="false"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/editor_add_instrument_name_button"
@@ -74,6 +84,9 @@
                 android:id="@+id/tuning_id_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:inputType="text"
+                android:imeOptions="actionDone"
                 android:hint="@string/editor_general_id_hint" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -85,13 +98,32 @@
             android:textSize="20sp"
             android:layout_marginTop="30dp"/>
 
+        <TextView
+            android:id="@+id/editor_localized_tuning_names_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:textStyle="italic"
+            android:visibility="gone"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/editor_tuning_names"
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            tools:listitem="@layout/localized_name_item"/>
+            android:nestedScrollingEnabled="false" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/editor_add_tuning_name_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/gray"
+            app:icon="@drawable/add_icon"
+            app:cornerRadius="0dp"
+            android:text="@string/editor_add_language"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -113,8 +145,19 @@
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            tools:listitem="@layout/editor_note_item"/>
+            android:nestedScrollingEnabled="false"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/editor_add_note_name_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/gray"
+            app:icon="@drawable/add_icon"
+            app:cornerRadius="0dp"
+            android:text="@string/editor_add_note"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -131,6 +174,9 @@
                 android:id="@+id/author_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:inputType="text"
+                android:imeOptions="actionDone"
                 android:hint="@string/editor_nickname_hint" />
         </com.google.android.material.textfield.TextInputLayout>
 

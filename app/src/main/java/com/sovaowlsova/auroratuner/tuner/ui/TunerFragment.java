@@ -86,12 +86,7 @@ public class TunerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         System.out.println("Creating tuner...");
         super.onCreate(savedInstanceState);
-        SavedStateViewModelFactory viewModelFactory = new SavedStateViewModelFactory(
-                requireActivity().getApplication(),
-                this,
-                getArguments());
-        System.out.println("viewModel is null: " + (viewModel == null));
-        viewModel = new ViewModelProvider(this, viewModelFactory).get(TunerViewModel.class);
+
     }
 
     @Nullable
@@ -103,6 +98,13 @@ public class TunerFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        SavedStateViewModelFactory viewModelFactory = new SavedStateViewModelFactory(
+                requireActivity().getApplication(),
+                this,
+                getArguments());
+        System.out.println("viewModel is null: " + (viewModel == null));
+        viewModel = new ViewModelProvider(this, viewModelFactory).get(TunerViewModel.class);
         setContextualVariables();
 
         LifecycleOwner lifecycleOwner = getViewLifecycleOwner();

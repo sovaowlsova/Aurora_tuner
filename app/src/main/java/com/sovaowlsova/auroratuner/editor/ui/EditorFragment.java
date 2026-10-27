@@ -6,6 +6,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.SavedStateViewModelFactory;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,30 +16,36 @@ import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.sovaowlsova.auroratuner.R;
+import com.sovaowlsova.auroratuner.core.model.JsonTuning;
 import com.sovaowlsova.auroratuner.core.util.Constants;
-import com.sovaowlsova.auroratuner.editor.model.LanguageItem;
+import com.sovaowlsova.auroratuner.editor.model.ExportTuningPayload;
+import com.sovaowlsova.auroratuner.editor.model.InputErrorPayload;
 import com.sovaowlsova.auroratuner.editor.model.LocalizedNamesRVAdapter;
-
-import java.util.Collections;
-import java.util.List;
 
 public class EditorFragment extends Fragment {
     private TextInputEditText instrumentIdInput;
     private TextInputEditText tuningIdInput;
     private TextInputEditText authorInput;
+    private TextView localizedInstrumentNamesErrorMessage;
+    private TextView localizedTuningNamesErrorMessage;
     private RecyclerView localizedInstrumentNamesRecyclerView;
     private RecyclerView localizedTuningNamesRecyclerView;
     private RecyclerView notesRecyclerView;
     private MaterialButton addInstrumentNameButton;
+    private MaterialButton addTuningNameButton;
     private Button exportTuningButton;
+    private EditorViewModel viewModel;
 
     private LocalizedNamesRVAdapter instrumentNamesAdapter;
+    private LocalizedNamesRVAdapter tuningNamesAdapter;
 
 
     public EditorFragment() {
@@ -58,9 +67,27 @@ public class EditorFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setContextualVariables();
-        exportTuningButton.setOnClickListener(this::exportTuningToJson);
 
+        configureViewModel();
+        setContextualVariables();
+        configureLocalizedInstrumentNamesAdapter();
+        configureLocalizedTuningNamesAdapter();
+        configureEditFields();
+        subscribeToLiveData();
+
+        exportTuningButton.setOnClickListener(this::exportTuningToJson);
+    }
+
+    private void configureViewModel() {
+        SavedStateViewModelFactory viewModelFactory = new SavedStateViewModelFactory(
+                requireActivity().getApplication(),
+                this,
+                getArguments());
+        System.out.println("viewModel is null: " + (viewModel == null));
+        viewModel = new ViewModelProvider(this, viewModelFactory).get(EditorViewModel.class);
+    }
+
+    private void configureLocalizedInstrumentNamesAdapter() {
         instrumentNamesAdapter = new LocalizedNamesRVAdapter(Constants.supportedLocales, requireContext());
         LinearLayoutManager layoutManager = new LinearLayoutManager(
                 requireContext(),
@@ -73,6 +100,74 @@ public class EditorFragment extends Fragment {
         addInstrumentNameButton.setOnClickListener(view1 -> {
             instrumentNamesAdapter.addLanguage();
         });
+    }
+
+    private void configureLocalizedTuningNamesAdapter() {
+        tuningNamesAdapter = new LocalizedNamesRVAdapter(Constants.supportedLocales, requireContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.VERTICAL,
+                false
+        );
+        localizedTuningNamesRecyclerView.setLayoutManager(layoutManager);
+        localizedTuningNamesRecyclerView.setAdapter(tuningNamesAdapter);
+
+        addTuningNameButton.setOnClickListener(view1 -> {
+            tuningNamesAdapter.addLanguage();
+        });
+    }
+
+    private void configureEditFields() {
+        configureEditField(tuningIdInput);
+        configureEditField(instrumentIdInput);
+        configureEditField(authorInput);
+    }
+
+    private void configureEditField(TextInputEditText field) {
+        field.setOnEditorActionListener(((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_DONE) {
+                clearFocusAndHideKeyboard(field);
+                return true;
+            }
+            return false;
+        }));
+    }
+
+    private void exportTuningToJson(View view) {
+        Editable tuningId = tuningIdInput.getText();
+        Editable instrumentId = instrumentIdInput.getText();
+        Editable authorNickname = authorInput.getText();
+
+        ExportTuningPayload payload = new ExportTuningPayload(
+                stringOrNull(instrumentId),
+                stringOrNull(tuningId),
+                stringOrNull(authorNickname),
+                instrumentNamesAdapter,
+                tuningNamesAdapter
+        );
+
+        viewModel.exportTuningToJson(payload);
+    }
+
+    private String stringOrNull(Editable editable) {
+        return editable == null ? null : editable.toString();
+    }
+    private void setErrors(InputErrorPayload payload) {
+        Context context = requireContext();
+        if (payload.tuningIdErrorId() != View.NO_ID) tuningIdInput.setError(context.getString(payload.tuningIdErrorId()));
+        if (payload.instrumentIdErrorId() != View.NO_ID) instrumentIdInput.setError(context.getString(payload.instrumentIdErrorId()));
+        setErrorIfNotNull(payload.localizedInstrumentNamesErrorId(), localizedInstrumentNamesErrorMessage);
+        setErrorIfNotNull(payload.localizedTuningNamesErrorId(), localizedTuningNamesErrorMessage);
+    }
+
+    private void setErrorIfNotNull(int errorMessageId, TextView textView) {
+        if (errorMessageId == View.NO_ID) {
+            textView.setVisibility(View.GONE);
+            return;
+        }
+
+        textView.setText(requireContext().getString(errorMessageId));
+        textView.setVisibility(View.VISIBLE);
     }
 
     private void setContextualVariables() {
@@ -88,41 +183,23 @@ public class EditorFragment extends Fragment {
         notesRecyclerView = view.findViewById(R.id.editor_notes);
         addInstrumentNameButton = view.findViewById(R.id.editor_add_instrument_name_button);
         exportTuningButton = view.findViewById(R.id.editor_export_tuning_button);
+        localizedInstrumentNamesErrorMessage = view.findViewById(R.id.editor_localized_names_error);
+        localizedTuningNamesErrorMessage = view.findViewById(R.id.editor_localized_tuning_names_error);
+        addTuningNameButton = view.findViewById(R.id.editor_add_tuning_name_button);
     }
 
-    private void exportTuningToJson(View view) {
-        System.out.println("Clicked export button");
-        System.out.println("instrument_id: " + instrumentIdInput.getText());
-        System.out.println("tuning_id: " + tuningIdInput.getText());
-        System.out.println("author: " + authorInput.getText());
-
-        if (!validateInput()) {
-            Toast.makeText(requireContext(), R.string.editor_invalid_input, Toast.LENGTH_SHORT).show();
-        }
+    private void subscribeToLiveData() {
+        LifecycleOwner lifecycleOwner = getViewLifecycleOwner();
+        viewModel.getInputErrorData().observe(lifecycleOwner, this::setErrors);
     }
 
-    private boolean validateInput() {
-        boolean valid = true;
-        Context context = requireContext();
+    private void clearFocusAndHideKeyboard(TextInputEditText input) {
+        input.clearFocus();
 
-        if (isInputEmpty(instrumentIdInput)) {
-            valid = false;
-            instrumentIdInput.setError(context.getString(R.string.editor_empty_input_error));
+        InputMethodManager inputMethodManager = (InputMethodManager)
+                input.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(input.getWindowToken(), 0);
         }
-
-        if (isInputEmpty(tuningIdInput)) {
-            valid = false;
-            tuningIdInput.setError(context.getString(R.string.editor_empty_input_error));
-        }
-
-        List<LanguageItem> instrumentNames = instrumentNamesAdapter.getData();
-        System.out.println("Instrument names:");
-        instrumentNames.forEach(i -> System.out.println(i.getLocale() + ": " + i.getName()));
-
-        return valid;
-    }
-
-    private boolean isInputEmpty(TextInputEditText input) {
-        return input.getText().toString().trim().isEmpty();
     }
 }

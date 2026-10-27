@@ -46,14 +46,10 @@ public class LocalizedNamesRVAdapter extends RecyclerView.Adapter<LocalizedNames
         data.get(0).setLocale(locales.get(0));
     }
 
-    public List<LanguageItem> getData() {
-        List<LanguageItem> result = new ArrayList<>();
+    public HashMap<String, String> getData() {
+        HashMap<String, String> result = new HashMap<>();
         for (LanguageItem languageItem : data) {
-            LanguageItem copiedItem = new LanguageItem(languageItem);
-            if (copiedItem.getLocale() != null) {
-                copiedItem.setLocale(copiedItem.getLocale().split(" ")[0]);
-            }
-            result.add(copiedItem);
+            result.put(languageItem.getLocale(), languageItem.getName());
         }
         return result;
     }
@@ -68,6 +64,17 @@ public class LocalizedNamesRVAdapter extends RecyclerView.Adapter<LocalizedNames
         data.add(new LanguageItem());
 
         notifyItemInserted(data.size() - 1);
+    }
+
+    public int validateData() {
+        for (LanguageItem languageItem : data) {
+            String locale = languageItem.getLocale();
+            String name = languageItem.getName();
+
+            if (name == null || name.isBlank()) return R.string.editor_empty_name_fields_error;
+            if (locale == null || locale.isBlank()) return R.string.editor_empty_locales_error;
+        }
+        return View.NO_ID;
     }
 
     @SuppressLint("NotifyDataSetChanged")
