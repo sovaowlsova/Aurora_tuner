@@ -5,5 +5,6 @@ public record ExportTuningPayload(
         String tuningId,
         String authorNickname,
         LocalizedNamesRVAdapter localizedInstrumentNames,
-        LocalizedNamesRVAdapter localizedTuningNames
+        LocalizedNamesRVAdapter localizedTuningNames,
+        NotesRVAdapter notes
 ) {}

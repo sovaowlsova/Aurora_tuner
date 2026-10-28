@@ -133,6 +133,7 @@
             android:layout_marginTop="30dp"/>
 
         <TextView
+            android:id="@+id/editor_notes_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/editor_notes_total"
@@ -148,7 +149,7 @@
             android:nestedScrollingEnabled="false"/>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/editor_add_note_name_button"
+            android:id="@+id/editor_add_note_button"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"

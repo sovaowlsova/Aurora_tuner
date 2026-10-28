@@ -49,7 +49,7 @@ public class LocalizedNamesRVAdapter extends RecyclerView.Adapter<LocalizedNames
     public HashMap<String, String> getData() {
         HashMap<String, String> result = new HashMap<>();
         for (LanguageItem languageItem : data) {
-            result.put(languageItem.getLocale(), languageItem.getName());
+            result.put(languageItem.getLocale().split(" ")[0], languageItem.getName());
         }
         return result;
     }
@@ -248,17 +248,17 @@ public class LocalizedNamesRVAdapter extends RecyclerView.Adapter<LocalizedNames
         private TextWatcher textWatcher;
         private final Function<String, SpannableString> customFlagFactory;
 
-        public interface onRemoveClickListener {
+        public interface OnRemoveClickListener {
             void onRemove(int position);
         }
 
-        public interface onLocaleSelectedCallback {
+        public interface OnLocaleSelectedCallback {
             void onSelect(int langItemPosition, String selectedLocale);
         }
 
         public viewholder(@NonNull View itemView,
-                          onRemoveClickListener removeClickListener,
-                          onLocaleSelectedCallback localeSelectedCallback,
+                          OnRemoveClickListener removeClickListener,
+                          OnLocaleSelectedCallback localeSelectedCallback,
                           Function<String, SpannableString> customFlagFactory) {
             super(itemView);
 

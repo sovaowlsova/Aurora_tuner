@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,16 +25,17 @@ import android.widget.TextView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.sovaowlsova.auroratuner.R;
-import com.sovaowlsova.auroratuner.core.model.JsonTuning;
 import com.sovaowlsova.auroratuner.core.util.Constants;
 import com.sovaowlsova.auroratuner.editor.model.ExportTuningPayload;
 import com.sovaowlsova.auroratuner.editor.model.InputErrorPayload;
 import com.sovaowlsova.auroratuner.editor.model.LocalizedNamesRVAdapter;
+import com.sovaowlsova.auroratuner.editor.model.NotesRVAdapter;
 
 public class EditorFragment extends Fragment {
     private TextInputEditText instrumentIdInput;
     private TextInputEditText tuningIdInput;
     private TextInputEditText authorInput;
+    private TextView notesCountText;
     private TextView localizedInstrumentNamesErrorMessage;
     private TextView localizedTuningNamesErrorMessage;
     private RecyclerView localizedInstrumentNamesRecyclerView;
@@ -41,11 +43,13 @@ public class EditorFragment extends Fragment {
     private RecyclerView notesRecyclerView;
     private MaterialButton addInstrumentNameButton;
     private MaterialButton addTuningNameButton;
+    private MaterialButton addNoteButton;
     private Button exportTuningButton;
     private EditorViewModel viewModel;
 
     private LocalizedNamesRVAdapter instrumentNamesAdapter;
     private LocalizedNamesRVAdapter tuningNamesAdapter;
+    private NotesRVAdapter notesAdapter;
 
 
     public EditorFragment() {
@@ -70,9 +74,12 @@ public class EditorFragment extends Fragment {
 
         configureViewModel();
         setContextualVariables();
+
         configureLocalizedInstrumentNamesAdapter();
         configureLocalizedTuningNamesAdapter();
+        configureNotesAdapter();
         configureEditFields();
+
         subscribeToLiveData();
 
         exportTuningButton.setOnClickListener(this::exportTuningToJson);
@@ -117,6 +124,28 @@ public class EditorFragment extends Fragment {
         });
     }
 
+    private void configureNotesAdapter() {
+        notesAdapter = new NotesRVAdapter(requireContext());
+        Context context = requireContext();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(
+                context,
+                LinearLayoutManager.VERTICAL,
+                false
+        );
+        notesRecyclerView.setLayoutManager(layoutManager);
+        notesRecyclerView.setAdapter(notesAdapter);
+
+        addNoteButton.setOnClickListener(view -> {
+            notesAdapter.addNote();
+        });
+
+        setTotalNotesText(notesAdapter.getItemCount());
+    }
+
+    private void setTotalNotesText(int count) {
+        notesCountText.setText(requireContext().getString(R.string.editor_notes_total, count));
+    }
+
     private void configureEditFields() {
         configureEditField(tuningIdInput);
         configureEditField(instrumentIdInput);
@@ -143,7 +172,8 @@ public class EditorFragment extends Fragment {
                 stringOrNull(tuningId),
                 stringOrNull(authorNickname),
                 instrumentNamesAdapter,
-                tuningNamesAdapter
+                tuningNamesAdapter,
+                notesAdapter
         );
 
         viewModel.exportTuningToJson(payload);
@@ -186,11 +216,14 @@ public class EditorFragment extends Fragment {
         localizedInstrumentNamesErrorMessage = view.findViewById(R.id.editor_localized_names_error);
         localizedTuningNamesErrorMessage = view.findViewById(R.id.editor_localized_tuning_names_error);
         addTuningNameButton = view.findViewById(R.id.editor_add_tuning_name_button);
+        addNoteButton = view.findViewById(R.id.editor_add_note_button);
+        notesCountText = view.findViewById(R.id.editor_notes_count);
     }
 
     private void subscribeToLiveData() {
         LifecycleOwner lifecycleOwner = getViewLifecycleOwner();
         viewModel.getInputErrorData().observe(lifecycleOwner, this::setErrors);
+        notesAdapter.getDataSizeData().observe(lifecycleOwner, this::setTotalNotesText);
     }
 
     private void clearFocusAndHideKeyboard(TextInputEditText input) {

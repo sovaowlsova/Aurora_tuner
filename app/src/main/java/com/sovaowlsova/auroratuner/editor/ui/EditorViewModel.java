@@ -18,6 +18,11 @@ public class EditorViewModel extends ViewModel {
         System.out.println("instrument_id: " + tuningPayload.instrumentId());
         System.out.println("tuning_id: " + tuningPayload.tuningId());
         System.out.println("author: " + tuningPayload.authorNickname());
+        System.out.println("Notes: " + tuningPayload.notes().getData().toString());
+        System.out.println("Localized instrument names:");
+        tuningPayload.localizedInstrumentNames().getData().forEach((key, value) -> System.out.println(key + ": " + value));
+        System.out.println("Localized tuning names:");
+        tuningPayload.localizedTuningNames().getData().forEach((key, value) -> System.out.println(key + ": " + value));
 
         if (!validateInput(tuningPayload)) return;
 
