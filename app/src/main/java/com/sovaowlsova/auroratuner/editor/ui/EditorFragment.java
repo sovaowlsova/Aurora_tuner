@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
@@ -21,6 +20,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -176,7 +176,10 @@ public class EditorFragment extends Fragment {
                 notesAdapter
         );
 
-        viewModel.exportTuningToJson(payload);
+        boolean noError = viewModel.exportTuningToJson(payload);
+        if (!noError) {
+            Toast.makeText(requireContext(), R.string.editor_error_processing_tuning, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private String stringOrNull(Editable editable) {

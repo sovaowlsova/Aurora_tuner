@@ -68,6 +68,7 @@
     <string name="editor_empty_name_fields_error">All name fields must be filled</string>
     <string name="editor_empty_locales_error">All locales must be chosen</string>
     <string name="editor_invalid_name">Only numbers and letters are allowed</string>
+    <string name="editor_error_processing_tuning">Error processing JSON. Contact developers</string>
 
     <string-array name="instruments_array">
         <item>@string/instrument_guitar</item>

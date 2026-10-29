@@ -40,7 +40,7 @@ public class NotesRVAdapter extends RecyclerView.Adapter<NotesRVAdapter.viewhold
         return dataSizeData;
     }
 
-    public List<String> getData() {
+    public ArrayList<String> getData() {
         return new ArrayList<>(data);
     }
 
